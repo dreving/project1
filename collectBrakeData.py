@@ -11,11 +11,11 @@ data = trialsx3 array
 of columns input voltage, current, label
 """
 
-    rc = RoboClaw('COM7', 0x80)
+    rc = RoboClaw('COM10', 0x80)
     Nb = brake.initNebula()
 # imports and set ups
     data = np.zeros(trials, 3)
-    motorSpeedList = [25, 50, 75, 100]
+    motorSpeedList = [50]
     maxTorque = 100.0
     for t in range(trials):
         # Input random voltage for torque

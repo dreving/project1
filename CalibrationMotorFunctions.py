@@ -1,16 +1,27 @@
 import numpy as np
 import time
+from roboclaw import RoboClaw
+import CalibrationMotorFunctions as CMF
 
 
 def setMotorSpeed(rc, speedPercent):
         # 40RPM Max for continuous
-    max_speed = rc.read_max_speed(1)
-    speed = round((speedPercent / 100.) * max_speed)
-    rc.set_speed(1, speed)
+    # speedPercent /= 1
+    # max_speed = rc.read_max_speed(1)
+    # speed = round((speedPercent / 100.) * max_speed)
+    # rc.set_speed(1, speed)
+    # actSpeedPercent = rc.read_speed(1)
+    # while abs(actSpeedPercent - speedPercent) > 3:
+    #     # print(actSpeedPercent)
+    #     actSpeedPercent = rc.read_speed(1)
+    #     time.sleep(0.01)
+    speed = int(speedPercent / 100 * 63)
+    rc.drive_motor(1, speed)
+        # assert -64 <= speed <= 63
 
 
 def stopMotor(rc):
-    setMotorSpeed(rc, 0)
+    rc.set_speed(1, 0)
     time.sleep(.1)
     rc.stop_all()
 
@@ -26,6 +37,7 @@ def readAvgCurrent(rc, secs, rate=100):
     for i in range(numpts):
         data[i] = readInCurrent(rc)
         time.sleep(wait)
+    print(max(data))
     avg = np.nanmean(data)
     var = np.nanvar(data)
     return (avg, var)

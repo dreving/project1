@@ -1,0 +1,506 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"se",
+				"setMotorSpeed\tfunction"
+			],
+			[
+				"roc",
+				"roboclaw\tmodule"
+			],
+			[
+				"MCLIB",
+				"MCLIBException"
+			],
+			[
+				"ra",
+				"randint\tfunction"
+			],
+			[
+				"robocl",
+				"roboclaw\tmodule"
+			],
+			[
+				"Mot",
+				"motorSpeedList\tstatement"
+			],
+			[
+				"time",
+				"timeLength\tstatement"
+			],
+			[
+				"re",
+				"readAvgCurrent\tfunction"
+			],
+			[
+				"Py",
+				"PyObject"
+			],
+			[
+				"dist",
+				"distutils\tmodule"
+			],
+			[
+				"setup",
+				"setuptools\tmodule"
+			],
+			[
+				"set",
+				"setTorque_docstring"
+			],
+			[
+				"s",
+				"stop_all\tfunction"
+			],
+			[
+				"Calb",
+				"CalibrationGUI\tclass"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "brake.cpp",
+			"settings":
+			{
+				"buffer_size": 5241,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "CalibrationMotorFunctions.py",
+			"settings":
+			{
+				"buffer_size": 935,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "MotorSpeedCurrentVarianceTest.py",
+			"settings":
+			{
+				"buffer_size": 1851,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 490.0,
+		"last_filter": "Package Control: ",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Enable Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"auto",
+				"Anaconda: Autoformat PEP8 Errors"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 549.0
+	},
+	"console":
+	{
+		"height": 162.0,
+		"history":
+		[
+			"pip roboclaw install",
+			"pip roboclaw",
+			"pip install roboclaw",
+			"setup.py install",
+			"python setup.py install",
+			"pip install roboclaw",
+			"python -m pip install pyserial",
+			"import numpy as np",
+			"np.ones(4)",
+			"x = np.array([1;2])",
+			"from __future__ import braces",
+			"from _future_ import braces",
+			"import this",
+			"import antigravity",
+			"print(subprocess.getoutput('python -c \"import sys; print(sys.version_info);\"'))",
+			"import subprocess",
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/test.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/QTgraphtest.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/graphtest.py",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIBEnums.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIBDefinitions.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIB_Errors.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIB_Common.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIBException.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIB.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/mainwindow.cpp",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/main.cpp",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/backgroundthread.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/MotorTest.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/MotorSpeedCurrentVarianceTest.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/mvnaiveanalyze.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/collectBrakeData.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/CalibrationMotorFunctions.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/brake.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/BrakeCalibration.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/test.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/setup.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/TEST/NebulaInterfaceTest.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/brake2.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/brake.cp36-win32.pyd",
+		"/C/pycxx/Demo/Python3/example.cxx",
+		"/C/pycxx/Demo/Python3/setup.py",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/GetNodeIDs/main.cpp",
+		"/C/Users/drevi/Anaconda3/Lib/distutils/distutils.cfg",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/setupex.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/examplePythonmodule.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/NebulaInterfaceTest.cpp",
+		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MotionController.h",
+		"/C/Users/drevi/AppData/Roaming/Sublime Text 3/Packages/MinGW-w64.sublime-build",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/mainwindow.h",
+		"/C/Program Files (x86)/Ingenia/MCLIB/lib-win32-msvc-10.0/MCLIB.dll",
+		"/C/Program Files (x86)/Ingenia/MCLIB/lib-win32-msvc-10.0/MCLIB.lib",
+		"/C/Users/drevi/Anaconda3/Lib/site-packages/roboclaw/roboclaw.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_position.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_mixedspeedaccel.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_mixedpwm.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_bareminimum.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/roboclaw2.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_read.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_readversion.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_speeddistance.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_speedacceldistance.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_speedaccel.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_speed.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/roboclaw_python/roboclaw_python/roboclaw_python/roboclaw_simplepwm.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/naiveanalyze.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/matColor.py",
+		"/C/Users/drevi/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/C/Users/drevi/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/drevi/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"lngptr",
+			"speed",
+			"n",
+			"xOrder",
+			"editmenu",
+			"7",
+			"trials",
+			"PAT",
+			"MotorSpeed",
+			"\\",
+			"inter"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"lngDrive",
+			"k",
+			"xParamLength",
+			"filemenu",
+			"t",
+			"motorSpeed",
+			"/"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": true,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "brake.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5241,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5218,
+								5218
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2430.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "CalibrationMotorFunctions.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 935,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								935,
+								935
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "MotorSpeedCurrentVarianceTest.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1851,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1523,
+								1523
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 203.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "MotorSpeedCurrentVarianceTest.sublime-project",
+	"replace":
+	{
+		"height": 80.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 73.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"naiveanalyze"
+			]
+		],
+		"width": 490.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 188.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

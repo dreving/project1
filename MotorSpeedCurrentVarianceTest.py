@@ -15,24 +15,29 @@ from roboclaw import RoboClaw
 import CalibrationMotorFunctions as CMF
 import brake
 
-timeLength = 2.0  # seconds
+timeLength = 3.0  # seconds
 pts = 100
-brakeStrength = [25, 50, 75]
+brakeStrength = [0,25, 50, 75,100]
 motorSpeed = range(20, 90, 10)
 data = np.full([len(motorSpeed), len(brakeStrength)], np.nan)
-Nb = brake.initNebula()
-rc = RoboClaw('COM7', 0x80)
+rc = RoboClaw('COM10', 0x80)
+Nb,Mc = brake.initNebula()
+
 # Nb = brake.initNebula()
 time.sleep(1)
-
-for strength in range(len(brakeStrength)):
-    brake.setTorque(Nb, brakeStrength[strength])
-    for speed in range(len(motorSpeed)):
-        print(motorSpeed[speed])
-        CMF.setMotorSpeed(rc, motorSpeed[speed])
+for speed in range(len(motorSpeed)):
+    CMF.setMotorSpeed(rc, motorSpeed[speed])
+    for strength in range(len(brakeStrength)):
+        brake.setTorque(Mc, brakeStrength[strength])
+# for strength in range(len(brakeStrength)):
+#     brake.setTorque(Mc, brakeStrength[strength])
+#     for speed in range(len(motorSpeed)):
+#         # print(motorSpeed[speed])
+#         CMF.setMotorSpeed(rc, motorSpeed[speed])
         # wait until Steady state confirmed
         # for t in range(pts):
         # figure out real arrangement, maybe a class
+        time.sleep(2)
         avg, v = CMF.readAvgCurrent(rc, timeLength, pts)
         data[speed, strength] = v
         # time.sleep(timeLength / pts)  #built into function
@@ -40,7 +45,7 @@ for strength in range(len(brakeStrength)):
 # Turn off the danger, it's time for science
 
 CMF.stopMotor(rc)
-brake.setTorque(Nb, 0)
+brake.setTorque(Mc, 0)
 # analyze all variances here JK Built in Function
 # varArray = np.zeros([len(motorSpeed), len(brakeStrength)])
 # for strength in range(len(brakeStrength)):
@@ -48,11 +53,13 @@ brake.setTorque(Nb, 0)
 #         test = data[speed, strength, :]
 #         varArray = np.nanvar(test)  # hashtagstats
 
-
+brake.close(Nb,Mc)
 # plot here
 ax = plt.subplot(111)
 for strength in range(len(brakeStrength)):
-    ax.plot(motorSpeed, data[:, strength])
+    lab = '%d Percent' % brakeStrength[strength]
+    ax.plot(motorSpeed, data[:, strength], label=lab)
+plt.legend()
 plt.title('Motor Speed Vs. Variance')
 plt.ylabel('Variance')
 plt.xlabel('Speed')
