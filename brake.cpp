@@ -15,7 +15,7 @@ static char module_docstring[] =
 static char initNebula_docstring[] =
     "Initializes Nebula controller in Torque mode and passes reference";
 static char setTorque_docstring[] =
-    "Sets Nebula specified in first argument to percentage of rated torque (int) given in second argument";
+    "Sets Nebula specified in first argument to percentage of rated torque (int, tenth of a percent) given in second argument";
 static char close_docstring[] =
     "Closes all Nebula Communication and frees memory";
 
@@ -142,6 +142,7 @@ static PyObject *setTorque(PyObject * self, PyObject *args)
     //Py_DECREF(lngDrive)
     //Drive = MCLIB::INode* (ptr);
    // Drive = ptr;
+    // target = target *10;
 	Drive->GetMotionController()->SetTargetTorque(target);
 	Py_RETURN_NONE;
 }

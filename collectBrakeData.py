@@ -17,9 +17,13 @@ of columns input voltage, current, label
     data = np.zeros(trials, 3)
     motorSpeedList = [50]
     maxTorque = 100.0
+    data[0, 2] = 0
+    brake.setTorque(Nb, strength)
+    CMF.setMotorSpeed(motorSpeedList[0])
+    noLoadCurrent = CMF.readAvgCurrent(rc, timeLength, pts)
     for t in range(trials):
         # Input random voltage for torque
-        strength = np.random.randint(0, 101)
+        strength = np.random.randint(0, 1001)
         data[t, 0] = strength
         brake.setTorque(Nb, strength)
 
@@ -39,5 +43,7 @@ of columns input voltage, current, label
 
     CMF.stopMotor(rc)
     brake.setTorque(Nb, 0)
-
+    fname = 
+    np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n', header='setPoint, prevsetPoint, Current', footer='', comments='# ')
+    n
     return data

@@ -1,11 +1,25 @@
 import numpy as np
 import time
-from roboclaw import RoboClaw
-import CalibrationMotorFunctions as CMF
 
 
 def setMotorSpeed(rc, speedPercent):
         # 40RPM Max for continuous
+    speed = min(63, int(speedPercent / 100 * 63))
+    rc.drive_motor(1, speed)
+
+    # assert -64 <= speed <= 63
+
+
+def setSafeMotorSpeed(rc, speedPercent):
+        # 40RPM Max for continuous
+    startSpeed = int(readSafeSpeed(rc))
+    if startSpeed > speedPercent:
+        accel = -10
+    else:
+        accel = 10
+    for speed in range(startSpeed, speedPercent, accel):
+        rc.drive_motor(1, int(speed / 100 * 63))
+        time.sleep(.1)
     # speedPercent /= 1
     # max_speed = rc.read_max_speed(1)
     # speed = round((speedPercent / 100.) * max_speed)
@@ -17,11 +31,20 @@ def setMotorSpeed(rc, speedPercent):
     #     time.sleep(0.01)
     speed = int(speedPercent / 100 * 63)
     rc.drive_motor(1, speed)
-        # assert -64 <= speed <= 63
+    time.sleep(.2)
+    # assert -64 <= speed <= 63
+
+
+def readSafeSpeed(rc):
+    return rc.read_motor_pwm(1)
+
+
+def readAcSpeed(rc):
+    return rc.read_speed(1)
 
 
 def stopMotor(rc):
-    rc.set_speed(1, 0)
+    setSafeMotorSpeed(rc, 0)
     time.sleep(.1)
     rc.stop_all()
 

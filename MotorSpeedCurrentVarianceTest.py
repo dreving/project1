@@ -17,20 +17,20 @@ import brake
 
 timeLength = 3.0  # seconds
 pts = 100
-brakeStrength = [0,25, 50, 75,100]
+brakeStrength = [0, 25, 50, 75, 100]
 motorSpeed = range(20, 90, 10)
 data = np.full([len(motorSpeed), len(brakeStrength)], np.nan)
 rc = RoboClaw('COM10', 0x80)
-Nb,Mc = brake.initNebula()
+Nb, Mc = brake.initNebula()
 
 # Nb = brake.initNebula()
 time.sleep(1)
 for speed in range(len(motorSpeed)):
     CMF.setMotorSpeed(rc, motorSpeed[speed])
     for strength in range(len(brakeStrength)):
-        brake.setTorque(Mc, brakeStrength[strength])
+        brake.setTorque(Mc, 10 * brakeStrength[strength])
 # for strength in range(len(brakeStrength)):
-#     brake.setTorque(Mc, brakeStrength[strength])
+#     brake.setTorque(Mc, 10* brakeStrength[strength])
 #     for speed in range(len(motorSpeed)):
 #         # print(motorSpeed[speed])
 #         CMF.setMotorSpeed(rc, motorSpeed[speed])
@@ -39,7 +39,7 @@ for speed in range(len(motorSpeed)):
         # figure out real arrangement, maybe a class
         time.sleep(2)
         avg, v = CMF.readAvgCurrent(rc, timeLength, pts)
-        data[speed, strength] = v
+        data[speed, strength] = avg
         # time.sleep(timeLength / pts)  #built into function
 
 # Turn off the danger, it's time for science
@@ -53,14 +53,14 @@ brake.setTorque(Mc, 0)
 #         test = data[speed, strength, :]
 #         varArray = np.nanvar(test)  # hashtagstats
 
-brake.close(Nb,Mc)
+brake.close(Nb, Mc)
 # plot here
 ax = plt.subplot(111)
 for strength in range(len(brakeStrength)):
     lab = '%d Percent' % brakeStrength[strength]
     ax.plot(motorSpeed, data[:, strength], label=lab)
 plt.legend()
-plt.title('Motor Speed Vs. Variance')
-plt.ylabel('Variance')
-plt.xlabel('Speed')
+plt.title('Motor Speed Vs. Current')
+plt.ylabel('Current (Amps)')
+plt.xlabel('Speed (%)')
 plt.show()
