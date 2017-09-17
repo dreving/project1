@@ -1,4 +1,6 @@
 
+import numpy as np
+import matplotlib.pyplot as plt
 def naiveanalyze(data, fold=10, debug=False):
     # 5*30 - at least 150 tests recommended
     # assume polynomial fit, for now, but not order of equation
@@ -11,6 +13,7 @@ def naiveanalyze(data, fold=10, debug=False):
 
     # split data set into training and test
     # np.random.shuffle shuffles columns
+    print(np.shape(data))
     stop = False
     n = 1
     parray = []
@@ -105,13 +108,15 @@ def naiveanalyze(data, fold=10, debug=False):
     if debug:
         # pass#plot stuff here, and run loop a few more times to be sure
         Xplot = np.linspace(min(data[:, 0]), max(data[:, 0]), 100)
-        # plt.figure(1)
-        plt.subplot(231)
-        plt.plot(testArray[-3][:, 0], testArray[-3][:, 1], 'bo',
-                 Xplot, np.polyval(parray[-3], Xplot), 'k--')
-        plt.title('Order:%d' % (len(parray[-3])-1))
-        plt.ylabel('Y')
-        plt.xlabel('X')
+        if len(testArray) > 2:
+            
+            # plt.figure(1)
+            plt.subplot(231)
+            plt.plot(testArray[-3][:, 0], testArray[-3][:, 1], 'bo',
+                     Xplot, np.polyval(parray[-3], Xplot), 'k--')
+            plt.title('Order:%d' % (len(parray[-3])-1))
+            plt.ylabel('Y')
+            plt.xlabel('X')
 
         plt.subplot(232)
         plt.plot(testArray[-2][:, 0], testArray[-2][:, 1], 'bo',
@@ -146,7 +151,7 @@ def naiveanalyze(data, fold=10, debug=False):
         plt.xlabel('X')
         plt.subplots_adjust(top=0.90, bottom=0.1, left=0.15, right=0.90,
                             hspace=0.49, wspace=0.7)
-
+        plt.show()
     return parray[-2]
     # return polynomial, error in some form, r^2
 
@@ -177,21 +182,21 @@ def parseData(data):
 
 
 # naive analyze test
-import numpy as np
-import matplotlib.pyplot as plt
-ptest = np.array([ .8,-.30, .40,-.8,0 ,-.5 ])
-pts = 300
-under = 0
-over = 0
-for q in range(1000):
-    noise = np.random.normal(0, 5, pts)
-    x = [np.linspace(0.0, 15.0, pts)]
-    y = np.polyval(ptest, x) + noise
-    data = np.concatenate((x, y), axis=0).T
-    p = naiveanalyze(data, 10,True)
-    if len(p) < len(ptest):
-        under += 0.001
-    if len(p) > len(ptest):
-        over += 0.001
-    plt.show()
-print((under, over))
+# import numpy as np
+# import matplotlib.pyplot as plt
+# ptest = np.array([ .8,-.30, .40,-.8,0 ,-.5 ])
+# pts = 300
+# under = 0
+# over = 0
+# for q in range(1000):
+#     noise = np.random.normal(0, 5, pts)
+#     x = [np.linspace(0.0, 15.0, pts)]
+#     y = np.polyval(ptest, x) + noise
+#     data = np.concatenate((x, y), axis=0).T
+#     p = naiveanalyze(data, 10,True)
+#     if len(p) < len(ptest):
+#         under += 0.001
+#     if len(p) > len(ptest):
+#         over += 0.001
+#     plt.show()
+# print((under, over))

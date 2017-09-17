@@ -14,8 +14,8 @@ rc = RoboClaw('COM10', 0x80)
 Nb, Mc = brake.initNebula()
 dt = 1.0 / pts
 P = 12
-D= 4
-I =1
+D = 4
+I = 1
 # Create List of Commands
 intError = 0
 lastError = 0
@@ -35,14 +35,14 @@ while currTime < fullTime:
     derror = error - lastError
     intError += error
     command = acSpeed + P * error + D * derror + I * intError
-    CMF.setMotorSpeed(rc, command )
+    CMF.setMotorSpeed(rc, command)
     lastError = error
     brakeTorque = brakeStrength[int(np.floor(currTime / timeLength))]
     brake.setTorque(Mc, brakeTorque)
-    data[int(np.floor(currTime / dt)),0] = brakeTorque / 10
-    data[int(np.floor(currTime / dt)),1] = CMF.readInCurrent(rc)
-    data[int(np.floor(currTime / dt)),2] = acSpeed
-    data[int(np.floor(currTime / dt)),3] = setSpeed
+    data[int(np.floor(currTime / dt)), 0] = brake.readCurrent(Mc)/10
+    data[int(np.floor(currTime / dt)), 1] = CMF.readInCurrent(rc)
+    data[int(np.floor(currTime / dt)), 2] = acSpeed
+    data[int(np.floor(currTime / dt)), 3] = setSpeed
     loopTime = time.time() - currTime - start
     if loopTime < dt:
         time.sleep(dt - loopTime)
@@ -55,20 +55,23 @@ brake.close(Nb, Mc)
 
 # plot here
 ax = plt.subplot(311)
-ax.plot(np.linspace(0,fullTime,int(fullTime * pts)), data[:, 0], label='Motor Current')
-plt.legend()
+ax.plot(np.linspace(0, fullTime, int(fullTime * pts)),
+        data[:, 0], label='Motor Current')
+# plt.legend()
 plt.title('Brake Command Vs. Time')
 plt.ylabel('Current (%)')
 plt.xlabel('Time(s)')
 ax1 = plt.subplot(312)
-ax1.plot(np.linspace(0,fullTime,int(fullTime * pts)), data[:, 1], label='Motor Current')
+ax1.plot(np.linspace(0, fullTime, int(fullTime * pts)),
+         data[:, 1], label='Motor Current')
 plt.legend()
 plt.title('Motor Current Vs. Time')
 plt.ylabel('Current (Amps)')
 plt.xlabel('Time(s)')
 ax2 = plt.subplot(313)
-ax2.plot(np.linspace(0,fullTime,int(fullTime * pts)), data[:, 2], label='Motor Current')
-plt.legend()
+ax2.plot(np.linspace(0, fullTime, int(fullTime * pts)),
+         data[:, 2], label='Motor Current')
+# plt.legend()
 plt.title('Speed Vs. Time')
 plt.ylabel('Speed (%)')
 plt.xlabel('Time(s)')

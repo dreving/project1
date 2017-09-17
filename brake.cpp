@@ -18,18 +18,20 @@ static char setTorque_docstring[] =
     "Sets Nebula specified in first argument to percentage of rated torque (int, tenth of a percent) given in second argument";
 static char close_docstring[] =
     "Closes all Nebula Communication and frees memory";
-
+static char readCurrent_docstring[] = 
+    "Reads the actual current sent to the brake";
 /* Available functions */
 
 static PyObject *initNebula(PyObject *self);
 static PyObject *setTorque(PyObject *self, PyObject *args);
 static PyObject *close(PyObject *self, PyObject *args);
-
+static PyObject *readCurrent(PyObject *self, PyObject *args);
 /* Module specification */
 static PyMethodDef module_methods[] = {
     {"initNebula", (PyCFunction)initNebula, METH_NOARGS, initNebula_docstring},
     {"setTorque", (PyCFunction)setTorque, METH_VARARGS, setTorque_docstring},
     {"close", (PyCFunction)close, METH_VARARGS, close_docstring},
+    {"readCurrent", (PyCFunction)readCurrent, METH_VARARGS, readCurrent_docstring},
     {NULL, NULL, 0, NULL}
 };
 
@@ -145,6 +147,24 @@ static PyObject *setTorque(PyObject * self, PyObject *args)
     // target = target *10;
 	Drive->GetMotionController()->SetTargetTorque(target);
 	Py_RETURN_NONE;
+}
+
+static PyObject *readCurrent(PyObject * self, PyObject *args)
+{
+    //set up variables to import from Python
+    PyObject* lngDrive;
+    MCLIB::INode* Drive;
+    int16_t torque;
+    if (!PyArg_ParseTuple(args, "O", &lngDrive))
+        return NULL;
+    
+    Drive = (MCLIB::INode*) PyLong_AsVoidPtr(lngDrive);
+    //Py_DECREF(lngDrive)
+    //Drive = MCLIB::INode* (ptr);
+   // Drive = ptr;
+    // target = target *10;
+    torque = Drive->GetMotionController()->GetActualTorque();
+    return Py_BuildValue("i",torque);
 }
 
 static PyObject *close(PyObject * self, PyObject *args) {
