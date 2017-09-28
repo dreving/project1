@@ -7,10 +7,11 @@ import brake
 
 timeLength = 2.0  # seconds
 pts = 50
-brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
-                 99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
+#brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
+#                 99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
+brakeStrength = [0, 100, 0]
 currentScale = 1000 / 100
-motorSpeed = 80  # [20, 20, 20, 20, 20]
+motorSpeed = 20  # [20, 20, 20, 20, 20]
 fullTime = timeLength * len(brakeStrength)
 rc = RoboClaw('COM10', 0x80)
 Nb, Mc = brake.initNebula()
@@ -39,7 +40,7 @@ while currTime < fullTime:
     error = setSpeed - acSpeed
     derror = error - lastError
     intError += error
-    command = setSpeed # acSpeed + P * error + D * derror + I * intError
+    command = acSpeed + P * error + D * derror + I * intError
     CMF.setMotorSpeed(rc, command)
     lastError = error
     brakeTorque = round(
@@ -72,9 +73,9 @@ while currTime < fullTime:
     currTime = time.time() - start
 
 
-fname = 'data/PlacidStepwiseTestNOPID3.csv'
-np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
-           header='TimeStamp (s), BrakeCommand (%), Actual Brake Torque (%), Motor Current (A), Motor Speed (%)', footer='', comments='# ')
+# fname = 'data/PlacidStepwiseTestNOPID3.csv'
+#np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
+#           header='TimeStamp (s), BrakeCommand (%), Actual Brake Torque (%), Motor Current (A), Motor Speed (%)', footer='', comments='# ')
 CMF.stopMotor(rc)
 brake.setTorque(Mc, 0)
 brake.close(Nb, Mc)

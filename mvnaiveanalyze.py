@@ -1,3 +1,10 @@
+import numpy as np
+import scipy
+from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import scipy.stats
+
 
 def mvnaiveanalyze(data, fold=10, debug=False):
     """ Data = k+1xt Matrix k = number of independent variables
@@ -98,10 +105,14 @@ def mvnaiveanalyze(data, fold=10, debug=False):
 
         # this constant is arbitrary TODO set to be standard error
         # if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > prevOverfit:
-        F = (prevOverfit - sseMax) / (sseMax/(N-k))
-        crit = scipy.stats.f.ppf(q=cert, dfn=1, dfd=(N-k))
-        # prob = scipy.stats.f.cdf(crit, dfn=3, dfd=39)
-        if sseMax > prevOverfit:
+        F = (prevOverfit - sseMax) / (sseMax / (N - k))
+        cert = .95  # confidence
+        # this function produces the critical value based on the confidence
+        crit = scipy.stats.f.ppf(q=cert, dfn=1, dfd=(N - k))
+        # Do I compare F to crit? Why did I stop here?
+        # prob = scipy.stats.f.cdf(crit, dfn=3, dfd=39) # This function will be the inverse of ppf if needed
+        # if sseMax > prevOverfit:
+        if F > crit:
             stop += 1
         else:
             stop = 0
@@ -249,22 +260,16 @@ def gf(data, *args, **kwargs):
     return val
 
 
-import numpy as np
-import scipy
-from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import scipy.stats 
-pts = 100
-global xParamLength
-xParamLength = 5
-xdata = np.repeat(np.linspace(0.0, 1.0, pts), 3)
-ydata = np.linspace(0.0, 3.0, 3 * pts)
+# pts = 100
+# global xParamLength
+# xParamLength = 5
+# xdata = np.repeat(np.linspace(0.0, 1.0, pts), 3)
+# ydata = np.linspace(0.0, 3.0, 3 * pts)
 
-zdata = gf(np.stack([xdata, ydata]), 1, 2, 3, 4, 5, 6, 7) + \
-    np.random.normal(0, 1, 3 * pts)
-data = np.stack([xdata, ydata, zdata])
-popt = mvnaiveanalyze(data, 10, True)
-print(popt)
+# zdata = gf(np.stack([xdata, ydata]), 1, 2, 3, 4, 5, 6, 7) + \
+#     np.random.normal(0, 1, 3 * pts)
+# data = np.stack([xdata, ydata, zdata])
+# popt = mvnaiveanalyze(data, 10, True)
+# print(popt)
 
-plt.show()
+# plt.show()

@@ -4,6 +4,7 @@ import time
 
 def setMotorSpeed(rc, speedPercent):
         # 40RPM Max for continuous
+    speedPercent = max(speedPercent,0)
     speed = min(63, int(speedPercent / 100 * 63))
     rc.drive_motor(1, speed)
 
@@ -64,3 +65,8 @@ def readAvgCurrent(rc, secs, rate=100):
     avg = np.nanmean(data)
     var = np.nanvar(data)
     return (avg, var)
+
+
+def itoT(i):
+    T = -87.8125 + .1804 * np.sqrt(64000 * i + 152211)
+    return T

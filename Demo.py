@@ -7,15 +7,15 @@ import brake
 
 timeLength = 3.0  # seconds
 pts = 100
-brakeStrength = [0, 250, 500, 750, 1000]
-motorSpeed = [20, 20, 20, 20, 20]
+brakeStrength = [0, 250, 500]
+motorSpeed = [20, 20, 20]
 fullTime = timeLength * len(brakeStrength)
 rc = RoboClaw('COM10', 0x80)
 Nb, Mc = brake.initNebula()
 dt = 1.0 / pts
-P = 12
-D = 4
-I = 1
+P = 1
+D = 3
+I = 0.1
 # Create List of Commands
 intError = 0
 lastError = 0
@@ -24,7 +24,7 @@ data = np.full([int(fullTime * pts), 4], np.nan)
 
 # Main Loop
 
-CMF.setMotorSpeed(rc, motorSpeed[0])
+# CMF.setMotorSpeed(rc, motorSpeed[0])
 time.sleep(1)
 start = time.time()
 currTime = 0.0
@@ -34,7 +34,7 @@ while currTime < fullTime:
     error = setSpeed - acSpeed
     derror = error - lastError
     intError += error
-    command = acSpeed + P * error + D * derror + I * intError
+    command = P * error + D * derror + I * intError
     CMF.setMotorSpeed(rc, command)
     lastError = error
     brakeTorque = brakeStrength[int(np.floor(currTime / timeLength))]

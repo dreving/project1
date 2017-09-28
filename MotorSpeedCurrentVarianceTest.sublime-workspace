@@ -4,6 +4,78 @@
 		"selected_items":
 		[
 			[
+				"sp",
+				"speedPercent\tstatement"
+			],
+			[
+				"c",
+				"collectBrakeData\tfunction"
+			],
+			[
+				"collec",
+				"collectBrakeData\tmodule"
+			],
+			[
+				"brake",
+				"brakeStrength\tstatement"
+			],
+			[
+				"bra",
+				"brakeStrength\tstatement"
+			],
+			[
+				"Cur",
+				"currTime\tstatement"
+			],
+			[
+				"time",
+				"timeLength\tparam"
+			],
+			[
+				"rna",
+				"random_integers\tfunction"
+			],
+			[
+				"tes",
+				"testArray\tstatement"
+			],
+			[
+				"as",
+				"asarray\tfunction"
+			],
+			[
+				"av",
+				"avgCurrent\tstatement"
+			],
+			[
+				"nana",
+				"nanmean\tfunction"
+			],
+			[
+				"int",
+				"int16_t"
+			],
+			[
+				"read",
+				"readCurrent"
+			],
+			[
+				"lin",
+				"linspace\tfunction"
+			],
+			[
+				"re",
+				"readInCurrent\tfunction"
+			],
+			[
+				"st",
+				"stopMotor\tfunction"
+			],
+			[
+				"str",
+				"strength\tstatement"
+			],
+			[
 				"se",
 				"setMotorSpeed\tfunction"
 			],
@@ -26,14 +98,6 @@
 			[
 				"Mot",
 				"motorSpeedList\tstatement"
-			],
-			[
-				"time",
-				"timeLength\tstatement"
-			],
-			[
-				"re",
-				"readAvgCurrent\tfunction"
 			],
 			[
 				"Py",
@@ -64,28 +128,46 @@
 	"buffers":
 	[
 		{
-			"file": "brake.cpp",
+			"file": "collectBrakeData.py",
 			"settings":
 			{
-				"buffer_size": 5241,
+				"buffer_size": 4120,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "CalibrationMotorFunctions.py",
+			"file": "mvnaiveanalyze.py",
 			"settings":
 			{
-				"buffer_size": 935,
+				"buffer_size": 9630,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "MotorSpeedCurrentVarianceTest.py",
+			"file": "PlacidStepWiseTest.py",
 			"settings":
 			{
-				"buffer_size": 1851,
+				"buffer_size": 3001,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Demo.py",
+			"settings":
+			{
+				"buffer_size": 2141,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test.py",
+			"settings":
+			{
+				"buffer_size": 679,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -176,7 +258,21 @@
 	},
 	"file_history":
 	[
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/arrangeBrakeData.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/testBrake.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/CalibrationMotorFunctions.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/itoT.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/PlacidStepWiseAnalysis.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/PlacidStepWiseTest.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/brake.cpp",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/naiveanalyze.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/mvnaiveanalyze.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/test.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/collectBrakeData.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/MotorSpeedCurrentVarianceTest.py",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/mainwindow.cpp",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/main.cpp",
+		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/backgroundthread.cpp",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/QTgraphtest.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/graphtest.py",
 		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIBEnums.h",
@@ -185,9 +281,6 @@
 		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIB_Common.h",
 		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIBException.h",
 		"/C/Program Files (x86)/Ingenia/MCLIB/includes/MCLIB.h",
-		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/mainwindow.cpp",
-		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/main.cpp",
-		"/C/Program Files (x86)/Ingenia/MCLIB/examples/QtMCLIB/backgroundthread.cpp",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/MotorTest.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/MotorSpeedCurrentVarianceTest.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/mvnaiveanalyze.py",
@@ -248,6 +341,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"placidData",
+			"e",
+			"loopStart",
 			"lngptr",
 			"speed",
 			"n",
@@ -266,6 +362,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"currTime",
 			"lngDrive",
 			"k",
 			"xParamLength",
@@ -283,54 +380,24 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "brake.cpp",
+					"file": "collectBrakeData.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5241,
+						"buffer_size": 4120,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5218,
-								5218
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2430.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "CalibrationMotorFunctions.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 935,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								935,
-								935
+								2540,
+								2540
 							]
 						],
 						"settings":
@@ -344,14 +411,6 @@
 								{
 									"characters": ".",
 									"selector": "source.python - string - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
-								},
-								{
-									"characters": ".",
-									"selector": "source.python - string - constant.numeric"
 								}
 							],
 							"syntax": "Packages/Python/Python.sublime-syntax",
@@ -359,27 +418,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1200.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "MotorSpeedCurrentVarianceTest.py",
+					"buffer": 1,
+					"file": "mvnaiveanalyze.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1851,
+						"buffer_size": 9630,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1523,
-								1523
+								4581,
+								4581
 							]
 						],
 						"settings":
@@ -393,6 +452,73 @@
 								{
 									"characters": ".",
 									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2900.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "PlacidStepWiseTest.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3001,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1380.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Demo.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2141,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								367,
+								367
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
 								},
 								{
 									"characters": ".",
@@ -404,10 +530,49 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 203.0,
+						"translation.y": 240.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "test.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 679,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								644,
+								644
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -415,7 +580,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -446,7 +611,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 112.0
+		"height": 88.0
 	},
 	"output.find_results":
 	{

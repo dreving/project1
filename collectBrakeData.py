@@ -2,48 +2,122 @@ import numpy as np
 import brake
 import CalibrationMotorFunctions as CMF
 from roboclaw import RoboClaw
+import time
 
 
-def collectBrakeData(trials, timeLength=3, pts=100):
+def collectBrakeData(trials, fname, timeLength=3, pts=50):
     """ For Specified number trials
 collect information in data
 data = trialsx3 array
 of columns input voltage, current, label
 """
 
-    rc = RoboClaw('COM10', 0x80)
-    Nb = brake.initNebula()
-# imports and set ups
-    data = np.zeros(trials, 3)
-    motorSpeedList = [50]
-    maxTorque = 100.0
-    data[0, 2] = 0
-    brake.setTorque(Nb, strength)
-    CMF.setMotorSpeed(motorSpeedList[0])
-    noLoadCurrent = CMF.readAvgCurrent(rc, timeLength, pts)
-    for t in range(trials):
-        # Input random voltage for torque
-        strength = np.random.randint(0, 1001)
-        data[t, 0] = strength
-        brake.setTorque(Nb, strength)
+#     rc = RoboClaw('COM10', 0x80)
+#     Nb = brake.initNebula()
+# # imports and set ups
+#     data = np.zeros(trials, 3)
+#     motorSpeedList = [50]
+#     maxTorque = 100.0
+#     data[0, 2] = 0
+#     brake.setTorque(Nb, strength)
+#     CMF.setMotorSpeed(motorSpeedList[0])
+#     noLoadCurrent = CMF.readAvgCurrent(rc, timeLength, pts)
+#     for t in range(trials):
+#         # Input random voltage for torque
+#         strength = np.random.randint(0, 1001)
+#         data[t, 0] = strength
+#         brake.setTorque(Nb, strength)
 
-    # Set motor Speed based on estimate to reduce variance
-        CMF.setMotorSpeed(motorSpeedList[np.floor(
-            brake / maxTorque * len(motorSpeedList))])
-    # Read value current I from controller
-        I, v = CMF.readAvgCurrent(rc, timeLength, pts)
-    # Do Interpolation to calculate Torque
-        data[t, 1] = np.nan  # TODO math
-        # Make Array of Input voltage and corresponding torque
-    # Label Data based on if previous value was
-        if t > 0:
-            data[t, 2] = data[t - 1, 1]
-    # less than (0) or greater than (1) new value
-    # First value is always zero
+#     # Set motor Speed based on estimate to reduce variance
+#         CMF.setMotorSpeed(motorSpeedList[np.floor(
+#             brake / maxTorque * len(motorSpeedList))])
+#     # Read value current I from controller
+#         I, v = CMF.readAvgCurrent(rc, timeLength, pts)
+#     # Do Interpolation to calculate Torque
+#         data[t, 1] = np.nan  # TODO math
+#         # Make Array of Input voltage and corresponding torque
+#     # Label Data based on if previous value was
+#         if t > 0:
+#             data[t, 2] = data[t - 1, 1]
+#     # less than (0) or greater than (1) new value
+#     # First value is always zero
+
+    brakeStrength = np.random.random_integers(0, 1000, (trials,))
+    currentScale = 1000 / 100
+    motorSpeed = 20  # [20, 20, 20, 20, 20]
+    fullTime = timeLength * len(brakeStrength)
+    rc = RoboClaw('COM10', 0x80)
+    Nb, Mc = brake.initNebula()
+    dt = 1.0 / pts
+    P = 12
+    D = 4
+    I = 1
+    # P = 0
+    # D = 0
+    # I = 0
+    # Create List of Commands
+    intError = 0
+    lastError = 0
+    # initialize Data
+    data = np.full([int(fullTime * pts), 6], np.nan)
+
+    # Main Loop
+
+    CMF.setMotorSpeed(rc, motorSpeed)
+    time.sleep(1)
+    start = time.time()
+    currTime = 0.0
+    while currTime < fullTime:
+        setSpeed = motorSpeed  # [int(np.floor(currTime / timeLength))]
+        acSpeed = CMF.readAcSpeed(rc)
+        error = setSpeed - acSpeed
+        derror = error - lastError
+        intError += error
+        command = acSpeed + P * error + D * derror + I * intError
+        CMF.setMotorSpeed(rc, command)
+        lastError = error
+        brakeTorque = int(round(
+            currentScale * brakeStrength[int(np.floor(currTime / timeLength))]))
+        brake.setTorque(Mc, brakeTorque)
+
+        # Record Data here
+
+        # TimeStamp
+        data[int(np.floor(currTime / dt)),
+             0] = currTime
+
+        # Brake Command
+        data[int(np.floor(currTime / dt)),
+             1] = brakeStrength[int(np.floor(currTime / timeLength))]
+
+        # Actual Brake Output
+        data[int(np.floor(currTime / dt)),
+             2] = brake.readCurrent(Mc) / currentScale
+        # prev Brake command
+        if (currTime > timeLength):
+            data[int(np.floor(currTime - timeLength / dt)),
+                 3] = brakeStrength[int(np.floor(currTime / timeLength))]
+        else:
+            data[int(np.floor(currTime - timeLength / dt)),
+                 3] = 0
+        # Motor Current
+        data[int(np.floor(currTime / dt)), 4] = CMF.readInCurrent(rc)
+
+        # Motor Speed
+        data[int(np.floor(currTime / dt)), 5] = acSpeed
+        # data[int(np.floor(currTime / dt)), 3] = setSpeed
+        loopTime = time.time() - currTime - start
+        if loopTime < dt:
+            time.sleep(dt - loopTime)
+        currTime = time.time() - start
 
     CMF.stopMotor(rc)
     brake.setTorque(Nb, 0)
-    fname = 
-    np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n', header='setPoint, prevsetPoint, Current', footer='', comments='# ')
-    n
-    return data
+    brake.close(Nb, Mc)
+    fname = fname
+    np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
+               header='Time, setPoint, Actual Brake Current, prevsetPoint, MotorCurrent' 'MotorSpeed', footer='', comments='# ')
+    np.savetxt('BrakeCommands' + fname, brakeStrength, fmt='%d', delimiter=',', newline='\n',
+               header='', footer='', comments='# ')
+
+    return (data, brakeStrength)
