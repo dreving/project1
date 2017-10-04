@@ -9,8 +9,11 @@ def itoT(i):
     return T
 
 
-fname = 'data/PlacidStepwiseTest1.csv'
+fname = 'data/PG188PlacidStepwiseTest1.csv'
 data = np.loadtxt(fname, delimiter=',', comments='# ')
+for i in range(shape(data)[0]):
+        if data[i,4] < 0 or data[i,4] > 11:
+            data[i,4] = np.nan
 brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
                  99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
 brakeStrength = np.asarray(brakeStrength)

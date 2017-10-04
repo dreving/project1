@@ -6,15 +6,15 @@ import CalibrationMotorFunctions as CMF
 import brake
 
 timeLength = 3.0  # seconds
-pts = 100
-brakeStrength = [0, 250, 500]
-motorSpeed = [20, 20, 20]
+pts = 150
+brakeStrength = [0, 250,500,750,1000,500,0,1000,0]
+motorSpeed = 10
 fullTime = timeLength * len(brakeStrength)
-rc = RoboClaw('COM10', 0x80)
+rc = RoboClaw('COM11', 0x80)
 Nb, Mc = brake.initNebula()
 dt = 1.0 / pts
-P = 1
-D = 3
+P = 7
+D = 15
 I = 0.1
 # Create List of Commands
 intError = 0
@@ -25,11 +25,13 @@ data = np.full([int(fullTime * pts), 4], np.nan)
 # Main Loop
 
 # CMF.setMotorSpeed(rc, motorSpeed[0])
+CMF.setMotorSpeed(rc, motorSpeed)
 time.sleep(1)
 start = time.time()
 currTime = 0.0
+
 while currTime < fullTime:
-    setSpeed = motorSpeed[int(np.floor(currTime / timeLength))]
+    setSpeed = motorSpeed
     acSpeed = CMF.readAcSpeed(rc)
     error = setSpeed - acSpeed
     derror = error - lastError

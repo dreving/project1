@@ -3,6 +3,10 @@ import CalibrationMotorFunctions as CMF
 
 
 def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=50):
+    #filter
+    for i in range(shape(data)[0]):
+        if data[i,4] < 0 or data[i,4] > 11:
+            data[i,4] = np.nan
     cmds = len(BrakeStrength)
     avgCurrent = np.zeros((cmds, 1))
     for t in range(cmds):
