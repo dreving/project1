@@ -4,12 +4,15 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import scipy.stats
+from rfit import rfit
 
 
 def mvnaiveanalyze(data, fold=10, debug=False):
-    """ Data = k+1xt Matrix k = number of independent variables
+    """ Data = txk+1 Matrix k = number of independent variables
            t = number of data points
-           last row is dependent variable """
+           last row is dependent variable
+           format is set as of October 4th stop fucking confusing yourself"""
+
     # Now have multiple variables, and stopping criteria for each one
     # use scipy.optimize.curve_fit
     # now build a function with different predictors
@@ -21,7 +24,6 @@ def mvnaiveanalyze(data, fold=10, debug=False):
     # scipy.optimize.curve_fit(f,xdata,ydata) <-allows initial guess
     # ydata = f(xdata, *params) + eps <- assumption
     # or numpy.polyfit(x,y,deg) <-easiest for now
-    # TEST- Make function- generate random data, define bounds by what give original eq
     # overfit error = testerror - trainerror -compare slopes
 
     # split data set into training and test
@@ -29,16 +31,20 @@ def mvnaiveanalyze(data, fold=10, debug=False):
     stop = 0  # need to be true for both variables
     k = 2
     xParamLength = 2
-    #first set should be x^2 + c and x+y+c
+    # first set should be x^2 + c and x+y+c
     fitList = []
+    np.random.shuffle(data)
+    data = data.T
+    splitData = np.array(np.array_split(data, fold, axis=1))
+    fitList.append(rfit(k, xParamLength, splitData, fold))
     while not(stop > 0):
         data = data.T
         np.random.shuffle(data)
         data = data.T
         splitData = np.array(np.array_split(data, fold, axis=1))
-        xinc = rfit(k+1,xParamLength+1, splitData,fold)
-        yinc = rfit(k+1,xParamLength,splitData,fold)
-        if xinc.getF() > yinc.getF():
+        xinc = rfit(k + 1, xParamLength + 1, splitData, fold)
+        yinc = rfit(k + 1, xParamLength, splitData, fold)
+        if xinc.getF(fitList[-1].sseMax) > yinc.getF(fitList[-1].sseMax):
             F = xinc.F
             fitList.append(yinc)
             fitList.append(xinc)
@@ -48,23 +54,25 @@ def mvnaiveanalyze(data, fold=10, debug=False):
             fitList.append(yinc)
         # this constant is arbitrary TODO set to be standard error
         # if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > prevOverfit:
-        cert = .95  # confidence
+        cert = .4  # confidence
         # this function produces the critical value based on the confidence
-        crit = scipy.stats.f.ppf(q=cert, dfn=1, dfd=(xinc.N - xinc.k)) #check which N/k I use
+        crit = scipy.stats.f.ppf(q=cert, dfn=1, dfd=(
+            xinc.N - xinc.k))  # check which N/k I use
         # Do I compare F to crit? Why did I stop here?
-        # prob = scipy.stats.f.cdf(crit, dfn=3, dfd=39) # This function will be the inverse of ppf if needed
+        # This function will be the inverse of ppf if needed
+        # prob = scipy.stats.f.cdf(crit, dfn=3, dfd=39)
         # if sseMax > prevOverfit:
 
-        #Stop Criteria Adjusted Here
-        if F > crit:
+        # Stop Criteria Adjusted Here
+        if F < crit:
             stop += 1
         else:
             stop = 0
 
-        #X and y's updated here
+        # X and y's updated here
         k = fitList[-1].k
         xParamLength = fitList[-1].xParamLength
-
+    print(len(fitList))
     if debug:  # TODO convert to 3d plots
         # pass#plot stuff here, and run loop a few more times to be sure
         pts = 100
@@ -78,36 +86,39 @@ def mvnaiveanalyze(data, fold=10, debug=False):
         coorGrid = np.asarray([np.reshape(xx, -1), np.reshape(yy, -1)])
         # print(np.shape(coorGrid))
         fig = plt.figure()
-        if len(testArray) > 2:
+        if len(fitList) > 4:
             ax0 = fig.add_subplot(231, projection='3d')
-            ax0.scatter(testArray[-3][0, :], testArray[-3]
-                        [1, :], testArray[-3][2, :], c='k')
-            ax0.plot_wireframe(coorGrid[0, :], coorGrid[1, :], gf(
-                coorGrid, *(parray[-3][0]), xPL=parray[-3][2]), alpha=0.4)
+            ax0.scatter(fitList[-5].bestTest[0, :], fitList[-5].bestTest
+                        [1, :], fitList[-5].bestTest[2, :], c='k')
+            ax0.plot_wireframe(coorGrid[0, :], coorGrid[1, :], fitList[-5].gf(
+                coorGrid, *(fitList[-5].pbest[0])),
+                alpha=0.4)
             # ax0.title('r**2 = %.2f' % (r2Array[-3][0]))
             ax4 = fig.add_subplot(234, projection='3d')
-            ax4.scatter(testArray[-3][0, :], testArray[-3]
-                        [1, :], resArray[-3], c='r')
+            ax4.scatter(fitList[-5].bestTest[0, :], fitList[-5].bestTest
+                        [1, :], fitList[-5].bestRes, c='r')
 
         ax1 = fig.add_subplot(232, projection='3d')
-        ax1.scatter(testArray[-2][0, :], testArray[-2]
-                    [1, :], testArray[-2][2, :], c='k')
-        ax1.plot_wireframe(coorGrid[0, :], coorGrid[1, :], gf(
-            coorGrid, *(parray[-2][0]), xPL=parray[-2][2]), alpha=0.4)
+        ax1.scatter(fitList[-3].bestTest[0, :], fitList[-3].bestTest
+                    [1, :], fitList[-3].bestTest[2, :], c='k')
+        ax1.plot_wireframe(coorGrid[0, :], coorGrid[1, :], fitList[-3].gf(
+            coorGrid, *(fitList[-3].pbest[0])),
+            alpha=0.4)
         ax5 = fig.add_subplot(235, projection='3d')
-        ax5.scatter(testArray[-2][0, :], testArray[-2]
-                    [1, :], resArray[-2], c='r')
+        ax5.scatter(fitList[-3].bestTest[0, :], fitList[-3].bestTest
+                    [1, :], fitList[-3].bestRes, c='r')
 
         ax2 = fig.add_subplot(233, projection='3d')
-        ax2.scatter(testArray[-1][0, :], testArray[-1]
-                    [1, :], testArray[-1][2, :], c='k')
-        ax2.plot_wireframe(coorGrid[0, :], coorGrid[1, :], gf(
-            coorGrid, *(parray[-1][0]), xPL=parray[-1][2]), alpha=0.4)
+        ax2.scatter(fitList[-1].bestTest[0, :], fitList[-1].bestTest
+                    [1, :], fitList[-1].bestTest[2, :], c='k')
+        ax2.plot_wireframe(coorGrid[0, :], coorGrid[1, :], fitList[-1].gf(
+            coorGrid, *(fitList[-1].pbest[0])),
+            alpha=0.4)
         # plt.figure(1)
 
         ax6 = fig.add_subplot(236, projection='3d')
-        ax6.scatter(testArray[-1][0, :], testArray[-1]
-                    [1, :], resArray[-1], c='r')
+        ax6.scatter(fitList[-1].bestTest[0, :], fitList[-1].bestTest
+                    [1, :], fitList[-1].bestRes, c='r')
 
         # plt.subplot(234)
         # plt.plot(testArray[-3][:, 0], resArray[-3], 'rx')
@@ -129,19 +140,18 @@ def mvnaiveanalyze(data, fold=10, debug=False):
         plt.subplots_adjust(top=0.90, bottom=0.1, left=0.15, right=0.90,
                             hspace=0.49, wspace=0.7)
 
-        plt.figure(2)
-        nr2 = []
-        ar2 = []
-        for r in range(len(r2Array)):
-            nr2.append(r2Array[r][0])
-            ar2.append(r2Array[r][1])
-        ax = plt.subplot(111)
-        ax.plot(pressArray, 'r')
-        # ax.plot(ar2, 'b')
-
-    return parray[-3]
+        # plt.figure(2)
+        # nr2 = []
+        # ar2 = []
+        # for r in range(len(r2Array)):
+        #     nr2.append(r2Array[r][0])
+        #     ar2.append(r2Array[r][1])
+        # ax = plt.subplot(111)
+        # ax.plot(pressArray, 'r')
+        # # ax.plot(ar2, 'b')
+        plt.show()
+    return fitList[-3].pbest
     # return polynomial, error in some form, r^2
-
 
 
 # def simpleAnalysis(data, p0):
@@ -168,8 +178,6 @@ def mvnaiveanalyze(data, fold=10, debug=False):
 #         over += 0.001
 #     plt.show()
 # print((under, over))
-
-
 
 
 # pts = 100

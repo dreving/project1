@@ -72,7 +72,9 @@ static PyObject *initNebula(PyObject * self)
 
     // Iterate over the devices connected
     uint32_t numberOfDevices = pDevices->size();
+    for (int i = 0; i < numberOfDevices; i++) {
 
+        try {
     /*
     QStringList strlistDevices;
     for (uint32_t i = 0; i < numberOfDevices; i++)
@@ -88,7 +90,8 @@ static PyObject *initNebula(PyObject * self)
     // int index = strlistDevices.indexOf(item);
 
     // Get the channels for the selected device
-    vector<MCLIB::IChannel*>* pChannels = pDevices->at(0)->GetChannels();
+    //
+    vector<MCLIB::IChannel*>* pChannels = pDevices->at(i)->GetChannels();
 
     // Select the current channel
     
@@ -119,9 +122,14 @@ static PyObject *initNebula(PyObject * self)
     PyObject* Channel = PyLong_FromVoidPtr(currentChannel);
     PyObject* ret = Py_BuildValue("(OO)",Channel,Drive);
     return ret;
+} catch (...) {;}
+}
+PyErr_SetString(PyExc_RuntimeError,
+                    "Nebula Controller Not Found");
+        return NULL;
     } catch (...) {
         PyErr_SetString(PyExc_RuntimeError,
-                    "Nebula Controller Not Found");
+                    "Unknown Initialization Error");
         return NULL;
 
     }

@@ -68,5 +68,5 @@ def readAvgCurrent(rc, secs, rate=100):
 
 
 def itoT(i):
-    T = -87.8125 + .1804 * np.sqrt(64000 * i + 152211)
+    T = -92.74 + 0.0111 * np.sqrt(35872000 * i + 34699500)
     return T

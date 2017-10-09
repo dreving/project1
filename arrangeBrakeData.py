@@ -2,9 +2,9 @@ import numpy as np
 import CalibrationMotorFunctions as CMF
 
 
-def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=50):
+def arrangeBrakeData(data, BrakeStrength, fname, timeLength=2, pts=150):
     #filter
-    for i in range(shape(data)[0]):
+    for i in range(np.shape(data)[0]):
         if data[i,4] < 0 or data[i,4] > 11:
             data[i,4] = np.nan
     cmds = len(BrakeStrength)
@@ -16,11 +16,14 @@ def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=50):
 
     # do Two Point current transformations
     avgTorque = CMF.itoT(avgCurrent)
-    prevStrength = np.hstack([0], BrakeStrength[:-1])
-    compData = np.vstack(BrakeStrength, prevStrength, avgTorque).T
+    prevStrength = np.hstack(([0], BrakeStrength[:-1]))
+    # print(np.shape(BrakeStrength))
+    # print(np.shape(prevStrength))
+    # print(np.shape(avgTorque[:,0]))
+    compData = np.vstack((BrakeStrength, prevStrength, avgTorque[:,0])).T
     # load lake Placid data
 
-    np.savetxt('Comp' + fname, compData, fmt='%.2f', delimiter=',', newline='\n',
+    np.savetxt('data/Comp' + fname, compData, fmt='%.2f', delimiter=',', newline='\n',
                header='setPoint, prevsetPoint, Current', footer='', comments='# ')
 
     return compData

@@ -3,9 +3,10 @@ import brake
 import CalibrationMotorFunctions as CMF
 from roboclaw import RoboClaw
 import time
+import matplotlib.pyplot as plt
 
 
-def collectBrakeData(trials, fname, timeLength=2, pts=150):
+def collectBrakeData(trials, fname, timeLength=2, pts=150, asym=False):
     """ For Specified number trials
 collect information in data
 data = trialsx3 array
@@ -42,12 +43,34 @@ of columns input voltage, current, label
 #     # less than (0) or greater than (1) new value
 #     # First value is always zero
 
-    brakeStrength = np.random.random_integers(0, 1000, (trials,)) /10.0
+    brakeStrength = np.random.random_integers(0, 1000, (trials,)) / 10.0
+    if asym:
+        step = 40
+        atrials = 200
+        asymSteps = np.zeros(atrials)
+        for i in range(1, atrials // 2, 2):
+            asymSteps[i] = min(1000, asymSteps[i - 1] + 2 *
+                               np.random.random_integers(0, step))
+            asymSteps[i + 1] = max(0, asymSteps[i] - 1 *
+                                   np.random.random_integers(0, step))
+        for i in range(atrials // 2, atrials, 2):
+            asymSteps[i] = max(0, asymSteps[i - 1] - 2 *
+                               np.random.random_integers(0, step))
+            asymSteps[i + 1] = min(1000, asymSteps[i] + 1 *
+                                   np.random.random_integers(0, step))
+        brakeStrength = np.append(brakeStrength, asymSteps / 10)
+        # print(np.shape(brakeStrength))
+        # plt.plot(brakeStrength)
+        # plt.show()
     currentScale = 1000 / 100
     motorSpeed = 10  # [20, 20, 20, 20, 20]
     fullTime = timeLength * len(brakeStrength)
+    
     rc = RoboClaw('COM11', 0x80)
     Nb, Mc = brake.initNebula()
+
+    
+    
     dt = 1.0 / pts
     P = 7
     D = 15
@@ -114,7 +137,7 @@ of columns input voltage, current, label
     CMF.stopMotor(rc)
     print('motor Stopped')
 
-    np.savetxt('data/'+ fname, data, fmt='%.2f', delimiter=',', newline='\n',
+    np.savetxt('data/' + fname, data, fmt='%.2f', delimiter=',', newline='\n',
                header='Time, setPoint, Actual Brake Current, prevsetPoint, MotorCurrent' 'MotorSpeed', footer='', comments='# ')
     np.savetxt('data/BrakeCommands' + fname, brakeStrength, fmt='%d', delimiter=',', newline='\n',
                header='', footer='', comments='# ')
