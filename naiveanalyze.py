@@ -100,7 +100,7 @@ def naiveanalyze(data, fold=10, debug=False):
 # parray.append(p[0])
 
         # this constant is arbitrary
-        if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > -.45 * prevOverfit:
+        if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > .2 * prevOverfit:
             stop = True
         n += 1  # increment polynomial
         prevOverfit = foldOverMax
@@ -132,11 +132,12 @@ def naiveanalyze(data, fold=10, debug=False):
         plt.ylabel('Y')
         plt.xlabel('X')
 
-        plt.subplot(234)
-        plt.plot(testArray[-3][:, 0], resArray[-3], 'rx')
-        plt.title('r**2 = %.2f' % (r2Array[-3]))
-        plt.ylabel('Y')
-        plt.xlabel('X')
+        if len(testArray) > 2:
+            plt.subplot(234)
+            plt.plot(testArray[-3][:, 0], resArray[-3], 'rx')
+            plt.title('r**2 = %.2f' % (r2Array[-3]))
+            plt.ylabel('Y')
+            plt.xlabel('X')
 
         plt.subplot(235)
         plt.plot(testArray[-2][:, 0], resArray[-2], 'rx')

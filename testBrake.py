@@ -1,9 +1,13 @@
-from collectBrakeData import collectBrakeData as collect
-from arrangeBrakeData import arrangeBrakeData as arrange
-from mvnaiveanalyze import mvnaiveanalyze as analyze
+# from collectBrakeData import collectBrakeData as collect
+# from arrangeBrakeData import arrangeBrakeData as arrange
+# from mvnaiveanalyze import mvnaiveanalyze as analyze
+from naiveanalyze import naiveanalyze as analyze
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import RiseFallSVM as svm
+from BrakeModel import BrakeModel
 
 
 def gf(data, *args, **kwargs):
@@ -21,13 +25,13 @@ def gf(data, *args, **kwargs):
 
 
 test = 'PG188Test2.csv'
-(data, BrakeStrength) = collect(150, test, asym=True)
+# (data, BrakeStrength) = collect(150, test, asym=True)
 data = np.loadtxt('data/' + test, delimiter=',', comments='# ')
 # for i in range(np.shape(data)[0]):
 #         if data[i,4] < 0 or data[i,4] > 11:
 #             data[i,4] = np.nan
-# BrakeStrength = np.loadtxt('data/BrakeCommands' +
-#                            test, delimiter=',', comments='# ')
+BrakeStrength = np.loadtxt('data/BrakeCommands' +
+                           test, delimiter=',', comments='# ')
 
 time = data[:, 0]
 # plot here
@@ -54,51 +58,101 @@ plt.ylabel('Speed (%)')
 plt.xlabel('Time(s)')
 
 plt.show()
-compData = arrange(data, BrakeStrength, test)
-
-# compData = np.loadtxt('data/Comp' + test, delimiter=',', comments='#')
+# compData = arrange(data, BrakeStrength, test)
+plt.plot(BrakeStrength)
+plt.show()
+compData = np.loadtxt('data/Comp' + test, delimiter=',', comments='#')
 fig = plt.figure()
+# ax0 = fig.add_subplot(111, projection='3d')
+# print(np.shape(compData))
+# ax0.scatter(compData[:, 0], compData[:, 1], compData[:, 2],
+#             c=compData[:, 0] - compData[:, 1], depthshade=False)
+# plt.title('Brake Commands Vs. Torque')
+# ax0.set_xlabel('Brake Command (%)')
+# ax0.set_ylabel(' Prev Brake Command (%)')
+# ax0.set_zlabel('Torque (in-lb)')
+
 ax0 = fig.add_subplot(111, projection='3d')
-print(np.shape(compData))
-ax0.scatter(compData[:, 0], compData[:, 1], compData[:, 2],
-            c=compData[:, 0] - compData[:, 1], depthshade=False)
+
+ax0.scatter(compData[:150, 0], compData[:150, 1], compData[:150, 2],
+            c='k', depthshade=False)
+ax0.scatter(compData[150:250, 0], compData[150:250, 1], compData[150:250, 2],
+            c='r', depthshade=False)
+ax0.scatter(compData[250:, 0], compData[250:, 1], compData[250:, 2],
+            c='b', depthshade=False)
 plt.title('Brake Commands Vs. Torque')
 ax0.set_xlabel('Brake Command (%)')
 ax0.set_ylabel(' Prev Brake Command (%)')
 ax0.set_zlabel('Torque (in-lb)')
 
+# ax1 = fig.add_subplot(122, projection='3d')
+
+# ax1.scatter(compData[:, 0], compData[:, 1], compData[:, 2],
+#             c=compData[:, 0] - compData[:, 1], depthshade=False)
+# plt.title('Brake Commands Vs. Torque')
+# ax1.set_xlabel('Brake Command (%)')
+# ax1.set_ylabel(' Prev Brake Command (%)')
+# ax1.set_zlabel('Torque (in-lb)')
+
+
 plt.show()
+clf = svm.build(compData[150:250], compData[250:])
+labels = svm.label(clf, compData)
+riseData, fallData = svm.split(compData, labels)
+print(np.shape(riseData))
+fig2 = plt.figure()
+ax0 = fig2.add_subplot(111, projection='3d')
+ax0.scatter(riseData[:, 0], riseData[:, 1], riseData[:, 2],
+            c='r', depthshade=False)
+ax0.scatter(fallData[:, 0], fallData[:, 1], fallData[:, 2],
+            c='b', depthshade=False)
+plt.title('Brake Commands Vs. Torque')
+ax0.set_xlabel('Brake Command (%)')
+ax0.set_ylabel(' Prev Brake Command (%)')
+ax0.set_zlabel('Torque (in-lb)')
+ax0.legend(('Lower Hysteresis Curve', 'Upper Hysteresis Curve'))
+plt.show()
+
+
+# Try single variable analysis for each
+
 # p = analyze(compData, 5, True)
+p1 = analyze(riseData[:, (0, 2)], 5, True)
+p2 = analyze(fallData[:, (0, 2)], 5, True)
+
+
 # print(p)
 
-# # load pLacid Data
-# placidData = np.genfromtxt('data/ActualPlacidData.csv', delimiter=',')
-# placidData[0, 0] = 1.25
-# actTorque = placidData[:, 0]
-# Command = placidData[:, 1]
-# # make previous command column
-# prevStrength = np.hstack(([0], placidData[:-1, 1]))
-# placCMD = np.vstack((Command, prevStrength))
-# print(np.shape(placCMD))
-# # run function over percentages to get torques
+# load pLacid Data
+placidData = np.genfromtxt('data/ActualPlacidData.csv', delimiter=',')
+placidData[0, 0] = 1.25
+actTorque = placidData[:, 0]
+Command = placidData[:, 1]
+# make previous command column
+prevStrength = np.hstack(([0], placidData[:-1, 1]))
+placCMD = np.vstack((Command, prevStrength))
+print(np.shape(placCMD))
+# run function over percentages to get torques
+brake = BrakeModel(clf, p1, p2)
+theoTorques = brake.model(Command)
 # theoTorques = gf(placCMD, *(p[0]), xPL=p[2])
 
-# print(np.shape(theoTorques))
-# # plot over data
-# # run function over percentages to get torques
-# ax = plt.subplot(121)
-# ax0 = ax.plot(Command, actTorque, 'k--', Command,
-#               theoTorques, 'b^')
-# plt.legend(ax0, ('PlacidData', 'Fit'))
-# plt.title('Brake Command Vs. Torque')
-# plt.ylabel('Torque (in-lb)')
-# plt.xlabel('Brake Command (%)')
-# ax = plt.subplot(122)
-# print(np.shape(placidData[:, 0]))
-# currError = (theoTorques - actTorque)
-# ax1 = ax.plot(Command, currError, 'r^')
-# plt.title('Brake Command Vs. Error')
-# plt.ylabel('Torque (in-lb)')
-# plt.xlabel('Brake Command (%)')
+print(np.shape(theoTorques))
+# plot over data
+# run function over percentages to get torques
+ax = plt.subplot(121)
+ax0 = ax.plot(Command, actTorque, 'k--', Command,
+              theoTorques, 'b^')
+plt.legend(ax0, ('PlacidData', 'Fit'))
+plt.title('Brake Command Vs. Torque')
+plt.ylabel('Torque (in-lb)')
+plt.xlabel('Brake Command (%)')
+ax = plt.subplot(122)
+print(np.shape(placidData[:, 0]))
+currError = (theoTorques - actTorque)
+ax1 = ax.plot(Command, currError, 'r^')
+plt.title('Brake Command Vs. Error')
+plt.ylabel('Torque (in-lb)')
+plt.xlabel('Brake Command (%)')
 
-# plt.show()
+plt.show()

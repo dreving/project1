@@ -9,7 +9,7 @@ def itoT(i):
     return T
 
 
-fname = 'data/PG188PlacidStepwiseTest1.csv'
+fname = 'data/PG188PlacidStepwiseTest2.csv'
 data = np.loadtxt(fname, delimiter=',', comments='# ')
 for i in range(np.shape(data)[0]):
         if data[i,4] < 0 or data[i,4] > 11:
@@ -52,13 +52,13 @@ currTorData = np.vstack((placidData[:, 0], avgCurrent[:, 0])).T
 # plot actual brake % data vs transformed torque
 # plot lake Placid data
 
-#ax = plt.subplot(111)
+ax = plt.subplot(111)
 # ax.plot(avgCurrent-1.25, placidData[:,0],np.linspace(0,18), 15*np.log(np.linspace(0,18)-1.25)+38)
-# ax.plot(avgCurrent, placidData[:, 0] )
-# plt.title('Actual Current Vs. Placid Reported Torque')
-# plt.ylabel('Torque (in-lb)')
-# plt.xlabel('Current (Amps)')
-
+ax.plot(avgCurrent, placidData[:, 0] )
+plt.title('Actual Current Vs. Placid Reported Torque')
+plt.ylabel('Torque (in-lb)')
+plt.xlabel('Current (Amps)')
+plt.show()
 ax = plt.subplot(121)
 ax0 = ax.plot(placidData[:, 1], placidData[:, 0], 'k--', brakeStrength,
               motorTorquesTP, 'b^', brakeStrength, itoT(avgCurrent), 'r^')

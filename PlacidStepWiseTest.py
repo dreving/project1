@@ -73,7 +73,7 @@ while currTime < fullTime:
     currTime = time.time() - start
 
 
-fname = 'data/PG188PlacidStepwiseTest1.csv'
+fname = 'data/PG188PlacidStepwiseTest2.csv'
 np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
            header='TimeStamp (s), BrakeCommand (%), Actual Brake Torque (%), Motor Current (A), Motor Speed (%)', footer='', comments='# ')
 CMF.stopMotor(rc)
