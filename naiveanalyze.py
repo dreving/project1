@@ -100,7 +100,7 @@ def naiveanalyze(data, fold=10, debug=False):
 # parray.append(p[0])
 
         # this constant is arbitrary
-        if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > .2 * prevOverfit:
+        if (prevOverfit != np.Inf) and (foldOverMax - prevOverfit) > -.4 * prevOverfit:
             stop = True
         n += 1  # increment polynomial
         prevOverfit = foldOverMax

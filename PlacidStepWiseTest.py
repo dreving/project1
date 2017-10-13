@@ -5,13 +5,15 @@ from roboclaw import RoboClaw
 import CalibrationMotorFunctions as CMF
 import brake
 
-timeLength = 2.0  # seconds
+timeLength = 5.0  # seconds
 pts = 150
+runs = 5
 brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
                  99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
+brakeStrength = brakeStrength * runs            
 #brakeStrength = [0, 100, 0]
 currentScale = 1000 / 100
-motorSpeed = 10  # [20, 20, 20, 20, 20]
+motorSpeed = 20  # [20, 20, 20, 20, 20]
 fullTime = timeLength * len(brakeStrength)
 rc = RoboClaw('COM11', 0x80)
 Nb, Mc = brake.initNebula()
@@ -73,7 +75,7 @@ while currTime < fullTime:
     currTime = time.time() - start
 
 
-fname = 'data/PG188PlacidStepwiseTest2.csv'
+fname = 'data/PG188PlacidStepwiseTest4.csv'
 np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
            header='TimeStamp (s), BrakeCommand (%), Actual Brake Torque (%), Motor Current (A), Motor Speed (%)', footer='', comments='# ')
 CMF.stopMotor(rc)

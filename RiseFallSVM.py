@@ -5,10 +5,10 @@ from sklearn.svm import SVC
 def build(riseData, fallData):
     trainData = np.vstack((riseData, fallData))
     trainLabels = np.hstack(
-        (-1* np.ones(len(riseData)),  np.ones(len(fallData))))
+        (-1 * np.ones(len(riseData)), np.ones(len(fallData))))
     print(np.shape(trainData))
     print(np.shape(trainLabels))
-    clf = SVC(kernel='linear')
+    clf = SVC(kernel='poly', degree=2)
     clf.fit(trainData, trainLabels)
     return clf
 

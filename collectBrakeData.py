@@ -6,9 +6,9 @@ import time
 import matplotlib.pyplot as plt
 
 
-def collectBrakeData(trials, fname, timeLength=2, pts=150, asym=False):
+def collectBrakeData(trials, fname, timeLength=4, pts=150, asym=False):
     """ For Specified number trials
-collect information in data
+collect information in data 
 data = trialsx3 array
 of columns input voltage, current, label
 """
@@ -63,7 +63,7 @@ of columns input voltage, current, label
         # plt.plot(brakeStrength)
         # plt.show()
     currentScale = 1000 / 100
-    motorSpeed = 10  # [20, 20, 20, 20, 20]
+    motorSpeed = 5  # [20, 20, 20, 20, 20]
     fullTime = timeLength * len(brakeStrength)
     
     rc = RoboClaw('COM11', 0x80)
