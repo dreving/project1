@@ -69,5 +69,7 @@ def readAvgCurrent(rc, secs, rate=100):
 
 def itoT(i):
     # T = -92.74 + 0.0111 * np.sqrt(35872000 * i + 34699500)
-    T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000)
+    # T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000) # for motor speed 10
+    T = -120.941 + 0.0111358 * \
+         np.sqrt(40160000 * i + 90000000)  # for motor speed 5
     return T

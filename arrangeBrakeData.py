@@ -2,7 +2,7 @@ import numpy as np
 import CalibrationMotorFunctions as CMF
 
 
-def arrangeBrakeData(data, BrakeStrength, fname, timeLength=2, pts=150):
+def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=150):
     #filter
     for i in range(np.shape(data)[0]):
         if data[i,4] < 0 or data[i,4] > 11:
@@ -16,6 +16,8 @@ def arrangeBrakeData(data, BrakeStrength, fname, timeLength=2, pts=150):
 
     # do Two Point current transformations
     avgTorque = CMF.itoT(avgCurrent)
+    for i in range(len(avgTorque)):
+        avgTorque[i] = max(1.25,avgTorque[i])
     prevStrength = np.hstack(([0], BrakeStrength[:-1]))
     # print(np.shape(BrakeStrength))
     # print(np.shape(prevStrength))

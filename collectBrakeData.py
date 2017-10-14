@@ -6,7 +6,7 @@ import time
 import matplotlib.pyplot as plt
 
 
-def collectBrakeData(trials, fname, timeLength=4, pts=150, asym=False):
+def collectBrakeData(trials, fname, timeLength=3, pts=150, atrials=0):
     """ For Specified number trials
 collect information in data 
 data = trialsx3 array
@@ -44,20 +44,23 @@ of columns input voltage, current, label
 #     # First value is always zero
 
     brakeStrength = np.random.random_integers(0, 1000, (trials,)) / 10.0
-    if asym:
-        step = 40
-        atrials = 200
+    if atrials > 0:
+        step = 20
+        cutoff = 100
         asymSteps = np.zeros(atrials)
         for i in range(1, atrials // 2, 2):
-            asymSteps[i] = min(1000, asymSteps[i - 1] + 2 *
+            asymSteps[i] = min(1000 - cutoff, asymSteps[i - 1] + 2 *
                                np.random.random_integers(0, step))
             asymSteps[i + 1] = max(0, asymSteps[i] - 1 *
                                    np.random.random_integers(0, step))
-        for i in range(atrials // 2, atrials, 2):
-            asymSteps[i] = max(0, asymSteps[i - 1] - 2 *
+        asymSteps[atrials // 2] = 1000
+        for i in range(atrials // 2 + 1, atrials - 1, 2):
+            asymSteps[i] = max(0 + cutoff, asymSteps[i - 1] - 2 *
                                np.random.random_integers(0, step))
             asymSteps[i + 1] = min(1000, asymSteps[i] + 1 *
                                    np.random.random_integers(0, step))
+        asymSteps[-1] = max(0 + cutoff, asymSteps[-2] - 2 *
+                            np.random.random_integers(0, step))
         brakeStrength = np.append(brakeStrength, asymSteps / 10)
         # print(np.shape(brakeStrength))
         # plt.plot(brakeStrength)
@@ -65,12 +68,10 @@ of columns input voltage, current, label
     currentScale = 1000 / 100
     motorSpeed = 5  # [20, 20, 20, 20, 20]
     fullTime = timeLength * len(brakeStrength)
-    
+
     rc = RoboClaw('COM11', 0x80)
     Nb, Mc = brake.initNebula()
 
-    
-    
     dt = 1.0 / pts
     P = 7
     D = 15

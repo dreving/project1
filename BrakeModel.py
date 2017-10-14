@@ -4,7 +4,7 @@ import numpy as np
 class BrakeModel(object):
     def __init__(self, svm, risep, fallp):
         self.prevcmd = [0]
-        self.torques = [0]
+        self.torques = [1.25]
         self.svm = svm
         self.risep = risep
         self.fallp = fallp
