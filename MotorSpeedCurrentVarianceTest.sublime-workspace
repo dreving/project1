@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"max",
+				"max_iter\tparam"
+			],
+			[
+				"avg",
+				"avgTorque\tstatement"
+			],
+			[
+				"v",
+				"vstack"
+			],
+			[
 				"asy",
 				"asymSteps\tstatement"
 			],
@@ -211,7 +223,7 @@
 			"file": "arrangeBrakeData.py",
 			"settings":
 			{
-				"buffer_size": 1064,
+				"buffer_size": 1300,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -220,7 +232,7 @@
 			"file": "testBrake.py",
 			"settings":
 			{
-				"buffer_size": 5656,
+				"buffer_size": 8071,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -229,7 +241,7 @@
 			"file": "collectBrakeData.py",
 			"settings":
 			{
-				"buffer_size": 5297,
+				"buffer_size": 5291,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -244,10 +256,19 @@
 			}
 		},
 		{
+			"file": "BrakeController.py",
+			"settings":
+			{
+				"buffer_size": 981,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "RiseFallSVM.py",
 			"settings":
 			{
-				"buffer_size": 772,
+				"buffer_size": 774,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -339,11 +360,11 @@
 	"file_history":
 	[
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/collectBrakeData.py",
+		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/BrakeModel.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/CalibrationMotorFunctions.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/naiveanalyze.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/PlacidStepWiseTest.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/RiseFallSVM.py",
-		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/BrakeModel.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/functionTest.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/testBrake.py",
 		"/C/Users/drevi/Desktop/BBI/Brake/Code/project1/PlacidStepWiseAnalysis.py",
@@ -481,15 +502,109 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1064,
+						"buffer_size": 1300,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								122,
-								122
+								768,
+								768
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 91.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "testBrake.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8071,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3762,
+								3762
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2680.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "collectBrakeData.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5291,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1722,
+								1722
 							]
 						],
 						"settings":
@@ -499,27 +614,74 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 756.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "testBrake.py",
+					"buffer": 3,
+					"file": "CalibrationMotorFunctions.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5656,
+						"buffer_size": 1892,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4240,
-								4240
+								1762,
+								1762
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 108.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "BrakeController.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 981,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								497,
+								497
 							]
 						],
 						"settings":
@@ -544,27 +706,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2251.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "collectBrakeData.py",
+					"buffer": 5,
+					"file": "RiseFallSVM.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5297,
+						"buffer_size": 774,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								196,
-								196
+								312,
+								312
 							]
 						],
 						"settings":
@@ -590,72 +752,7 @@
 					},
 					"stack_index": 2,
 					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "CalibrationMotorFunctions.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1892,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1892,
-								1892
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1159.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "RiseFallSVM.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 772,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								310,
-								310
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
 				}
-			]
-		},
-		{
-			"sheets":
-			[
 			]
 		}
 	],
@@ -687,7 +784,7 @@
 		"cols":
 		[
 			0.0,
-			0.835416666666,
+			0.559374999999,
 			1.0
 		],
 		"rows":
@@ -699,7 +796,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 391.0
+		"height": 383.0
 	},
 	"output.find_results":
 	{
@@ -743,7 +840,7 @@
 		],
 		"width": 490.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 		"last_automatic_layout":

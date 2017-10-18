@@ -45,8 +45,8 @@ of columns input voltage, current, label
 
     brakeStrength = np.random.random_integers(0, 1000, (trials,)) / 10.0
     if atrials > 0:
-        step = 20
-        cutoff = 100
+        step = 30
+        cutoff = 40
         asymSteps = np.zeros(atrials)
         for i in range(1, atrials // 2, 2):
             asymSteps[i] = min(1000 - cutoff, asymSteps[i - 1] + 2 *
@@ -62,9 +62,9 @@ of columns input voltage, current, label
         asymSteps[-1] = max(0 + cutoff, asymSteps[-2] - 2 *
                             np.random.random_integers(0, step))
         brakeStrength = np.append(brakeStrength, asymSteps / 10)
-        # print(np.shape(brakeStrength))
-        # plt.plot(brakeStrength)
-        # plt.show()
+        print(np.shape(brakeStrength))
+        plt.plot(brakeStrength)
+        plt.show()
     currentScale = 1000 / 100
     motorSpeed = 5  # [20, 20, 20, 20, 20]
     fullTime = timeLength * len(brakeStrength)
