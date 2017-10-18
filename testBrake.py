@@ -1,15 +1,16 @@
 #from collectBrakeData import collectBrakeData as collect
 from arrangeBrakeData import arrangeBrakeData as arrange
-from mvnaiveanalyze import mvnaiveanalyze as analyze
-from sklearn.svm import SVC
-from naiveanalyze import naiveanalyze as analyze
+# from mvnaiveanalyze import mvnaiveanalyze as analyze
+# from sklearn.svm import SVC
+# from naiveanalyze import naiveanalyze as analyze
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import RiseFallSVM as svm
-from BrakeModel import BrakeModel
+# from BrakeModel import BrakeModel
 from BrakeController import Controller
+from xyFit import *
 
 
 def gf(data, *args, **kwargs):
@@ -66,7 +67,7 @@ compData = arrange(data, BrakeStrength, test)
 # plt.plot(BrakeStrength)
 # plt.show()
 
-#compData = np.loadtxt('data/Comp' + test, delimiter=',', comments='#')
+# compData = np.loadtxt('data/Comp' + test, delimiter=',', comments='#')
 fig = plt.figure()
 ax0 = fig.add_subplot(111, projection='3d')
 print(np.shape(compData))
@@ -107,22 +108,22 @@ base = min(rData[:, -1])
 top = max(fData[:, -1])
 rData = np.vstack((rData, np.tile([0, base], [50, 1])))
 fData = np.vstack((fData, np.tile([100, top], [500, 1])))
-#TODO add min and max values to increase weight
-clf,scaler = svm.build(rData, fData)
+# TODO add min and max values to increase weight
+clf, scaler = svm.build(rData, fData)
 with open('data/' + 'Controller' + '.pickle', 'wb') as f:
     pickle.dump(clf, f)
 with open('data/' + 'Controller' + '.pickle', 'rb') as g:
     clf = pickle.load(g)
 labels = svm.label(clf, scaler, ncompData)
-riseData, fallData = svm.split(ncompData, labels)
+riseData, fallData = svm.split(compData, labels)
 
 
 # print(np.shape(riseData))
 fig2 = plt.figure()
-ax0 = fig2.add_subplot(111, )# projection='3d')
-ax0.scatter(riseData[:, 0], riseData[:, 1],   #riseData[:, 2],
+ax0 = fig2.add_subplot(111, )  # projection='3d')
+ax0.scatter(riseData[:, 0], riseData[:, -1],  # riseData[:, 2],
             c='r')
-ax0.scatter(fallData[:, 0], fallData[:, 1],   #fallData[:, 2],
+ax0.scatter(fallData[:, 0], fallData[:, -1],  # fallData[:, 2],
             c='b', )  # depthshade=False)
 plt.title('Brake Commands Vs. Torque')
 ax0.set_xlabel('Brake Command (%)')
@@ -141,15 +142,25 @@ base = min(riseData[:, -1])
 top = max(fallData[:, -1])
 
 # print(np.tile([100, top], [10,1]))
-rpoints = np.vstack((riseData[:, (0, -1)], np.tile([100, top], [25, 1])))
-fpoints = np.vstack((fallData[:, (0, -1)], np.tile([0, base], [25, 1])))
+rpoints = np.vstack((riseData[:, (0, 1,2)], np.tile([100, top, top], [25, 1])))
+fpoints = np.vstack((fallData[:, (0, 1,2)], np.tile([0, base, base], [25, 1])))
 # for brake
 # p1 = np.polyfit(rpoints[:, 0], rpoints[:, 1], 4)
 # p2 = np.polyfit(fpoints[:, 0], fpoints[:, 1], 3)
-
-# for controller
-p1 = np.polyfit(rpoints[:, -1], rpoints[:, 0], 6)
-p2 = np.polyfit(fpoints[:, -1], fpoints[:, 0], 3)
+#derivative
+rpoints[:,1] = rpoints[:,2]-rpoints[:,1]
+fpoints[:,1] = fpoints[:,2]-fpoints[:,1]
+# for
+riseXL = 6
+fallXL = 6
+riseXY = xyFit(riseXL,4 )
+print(rpoints)
+p1 = riseXY.fit(rpoints[:, (2, 1)], rpoints[:, 0])
+print(p1)
+fallXY = xyFit(fallXL, 4)
+p2 = fallXY.fit(fpoints[:, (2, 1)], fpoints[:, 0])
+# p1 = np.polyfit(rpoints[:, -1], rpoints[:, 0], 6)
+# p2 = np.polyfit(fpoints[:, -1], fpoints[:, 0], 3)
 
 
 # p1 = np.polyfit(riseData[:, 0], riseData[:, 2], 3)
@@ -172,7 +183,7 @@ placCMD = np.vstack((Command, prevStrength))
 
 # run function over percentages to get torques
 #brake = BrakeModel(clf, p1, p2)
-cont = Controller(clf, scaler, p1, p2)
+cont = Controller(clf, scaler, p1, riseXL, p2, fallXL)
 # print(clf.coef_)
 # c = clf.coef_
 # c = c[0]
@@ -192,11 +203,12 @@ ax = plt.subplot(111)
 #               theoTorques[:16], 'b^', Command[16:], theoTorques[16:], 'g^')
 
 cmdRange = np.linspace(0, 115, 100)
-rpts = np.polyval(p1, cmdRange)
-fpts = np.polyval(p2, cmdRange)
+# rpts = np.polyval(p1, cmdRange)
+# fpts = np.polyval(p2, cmdRange)
 ax0 = ax.plot(Command, actTorque, 'k--', theoCMDS[:16],
-              actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^', rpts, cmdRange, 'r--', fpts, cmdRange, 'b--') #,cmdRange,np.polyval(p3,cmdRange),'g--')
-plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit', 'Lower Polynomial', 'Upper Polynomial'))
+              actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^',) # rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
+plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit',
+                 'Lower Polynomial', 'Upper Polynomial'))
 plt.title('Brake Command Vs. Torque')
 plt.ylabel('Torque (in-lb)')
 plt.xlabel('Brake Command (%)')
@@ -253,11 +265,18 @@ ax0.set_zlabel('Brake Command Error  (%)')
 # ax0.legend(('Actual CMD', 'Predicted CMD'))
 plt.show()
 
-fig2 =plt.figure()
+fig2 = plt.figure()
 ax0 = fig2.add_subplot(111)
 ax0.plot(theoRandCMDs - rancompData[:, 0])
+plt.title('Brake Command Error over Time')
+plt.ylabel('Absolute Error')
+plt.xlabel('Brake Command (%)')
 plt.show()
-theoRandCMDs=np.asarray(theoRandCMDs).T
+theoRandCMDs = np.asarray(theoRandCMDs).T
+print(np.shape(rancompData))
+theoRandCMDs= theoRandCMDs.reshape(-1,1)
 print(np.shape(theoRandCMDs))
-result= np.vstack((theoRandCMDs,rancompData))
-np.savetxt('data/Result' + test, result)
+
+result = np.hstack(( rancompData,theoRandCMDs))
+np.savetxt('data/Result' + test, result,fmt='%.3f', delimiter=',', newline='\n',
+               header='Actual Command, Previous Torque, Measured Torque, Predicted Command', footer='', comments='# ')

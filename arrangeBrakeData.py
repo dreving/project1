@@ -28,7 +28,7 @@ def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=150):
     compData = np.vstack((BrakeStrength, prevTorque, avgTorque)).T
     # load lake Placid data
 
-    np.savetxt('data/Comp' + fname, compData, fmt='%.2f', delimiter=',', newline='\n',
+    np.savetxt('data/Comp' + fname, compData, fmt='%.3f', delimiter=',', newline='\n',
                header='setPoint, prevsetPoint, Current', footer='', comments='# ')
 
     return compData
