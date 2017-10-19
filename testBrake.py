@@ -1,4 +1,4 @@
-#from collectBrakeData import collectBrakeData as collect
+# from collectBrakeData import collectBrakeData as collect
 from arrangeBrakeData import arrangeBrakeData as arrange
 # from mvnaiveanalyze import mvnaiveanalyze as analyze
 # from sklearn.svm import SVC
@@ -142,18 +142,20 @@ base = min(riseData[:, -1])
 top = max(fallData[:, -1])
 
 # print(np.tile([100, top], [10,1]))
-rpoints = np.vstack((riseData[:, (0, 1,2)], np.tile([100, top, top], [25, 1])))
-fpoints = np.vstack((fallData[:, (0, 1,2)], np.tile([0, base, base], [25, 1])))
+rpoints = np.vstack(
+    (riseData[:, (0, 1, 2)], np.tile([100, top, top], [25, 1])))
+fpoints = np.vstack(
+    (fallData[:, (0, 1, 2)], np.tile([0, base, base], [25, 1])))
 # for brake
 # p1 = np.polyfit(rpoints[:, 0], rpoints[:, 1], 4)
 # p2 = np.polyfit(fpoints[:, 0], fpoints[:, 1], 3)
-#derivative
-rpoints[:,1] = rpoints[:,2]-rpoints[:,1]
-fpoints[:,1] = fpoints[:,2]-fpoints[:,1]
+# derivative
+rpoints[:, 1] = rpoints[:, 2] - rpoints[:, 1]
+fpoints[:, 1] = fpoints[:, 2] - fpoints[:, 1]
 # for
 riseXL = 6
 fallXL = 6
-riseXY = xyFit(riseXL,4 )
+riseXY = xyFit(riseXL, 4)
 print(rpoints)
 p1 = riseXY.fit(rpoints[:, (2, 1)], rpoints[:, 0])
 print(p1)
@@ -182,101 +184,107 @@ prevStrength = np.hstack(([0], placidData[:-1, 1]))
 placCMD = np.vstack((Command, prevStrength))
 
 # run function over percentages to get torques
-#brake = BrakeModel(clf, p1, p2)
+# brake = BrakeModel(clf, p1, p2)
 cont = Controller(clf, scaler, p1, riseXL, p2, fallXL)
+controlP = (clf, scaler, p1, riseXL, p2, fallXL)
+with open('data/' + 'Controller' + '.pickle', 'wb') as f:
+    pickle.dump(controlP, f)
+with open('data/' + 'Controller' + '.pickle', 'rb') as g:
+    (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
+cont2 = Controller(clf, scaler, p1, riseXL, p2, fallXL)
 # print(clf.coef_)
 # c = clf.coef_
 # c = c[0]
 # y = clf.intercept_
 # p3 = [-c[0] / c[1], -y/c[1]]
 # theoTorques, labels = brake.model(Command)
-theoCMDS, labels = cont.model(actTorque)
-print(theoCMDS)
-print(labels)
-# theoTorques = gf(placCMD, *(p[0]), xPL=p[2])
+# theoCMDS, labels = cont.model(actTorque)
+# print(theoCMDS)
+# print(labels)
+# # theoTorques = gf(placCMD, *(p[0]), xPL=p[2])
 
-# print(np.shape(theoTorques))
-# plot over data
-# run function over percentages to get torques
-ax = plt.subplot(111)
-# ax0 = ax.plot(Command, actTorque, 'k--', Command[:16],
-#               theoTorques[:16], 'b^', Command[16:], theoTorques[16:], 'g^')
+# # print(np.shape(theoTorques))
+# # plot over data
+# # run function over percentages to get torques
+# ax = plt.subplot(111)
+# # ax0 = ax.plot(Command, actTorque, 'k--', Command[:16],
+# #               theoTorques[:16], 'b^', Command[16:], theoTorques[16:], 'g^')
 
-cmdRange = np.linspace(0, 115, 100)
-# rpts = np.polyval(p1, cmdRange)
-# fpts = np.polyval(p2, cmdRange)
-ax0 = ax.plot(Command, actTorque, 'k--', theoCMDS[:16],
-              actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^',) # rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
-plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit',
-                 'Lower Polynomial', 'Upper Polynomial'))
-plt.title('Brake Command Vs. Torque')
-plt.ylabel('Torque (in-lb)')
-plt.xlabel('Brake Command (%)')
-
-# flipped
-# ax0 = ax.plot(actTorque, Command, 'k--',
-#               actTorque[:16], theoCMDS[:16], 'b^', actTorque[16:], theoCMDS[16:], 'g^')
-# plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit'))
+# cmdRange = np.linspace(0, 115, 100)
+# # rpts = np.polyval(p1, cmdRange)
+# # fpts = np.polyval(p2, cmdRange)
+# ax0 = ax.plot(Command, actTorque, 'k--', theoCMDS[:16],
+#               actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^',) # rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
+# plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit',
+#                  'Lower Polynomial', 'Upper Polynomial'))
 # plt.title('Brake Command Vs. Torque')
-# plt.xlabel('Torque (in-lb)')
-# plt.ylabel('Brake Command (%)')
-
-# ax = plt.subplot(122)
-# print(np.shape(placidData[:, 0]))
-# currError = (theoTorques - actTorque)
-# ax1 = ax.plot(Command[:16], currError[:16], 'r^',
-#               Command[16:], currError[16:], 'y^')
-# plt.title('Brake Command Vs. Error')
-# plt.legend(ax0, ('Lower Fit', 'Upper Fit'))
 # plt.ylabel('Torque (in-lb)')
 # plt.xlabel('Brake Command (%)')
 
-plt.show()
+# # flipped
+# # ax0 = ax.plot(actTorque, Command, 'k--',
+# #               actTorque[:16], theoCMDS[:16], 'b^', actTorque[16:], theoCMDS[16:], 'g^')
+# # plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit'))
+# # plt.title('Brake Command Vs. Torque')
+# # plt.xlabel('Torque (in-lb)')
+# # plt.ylabel('Brake Command (%)')
+
+# # ax = plt.subplot(122)
+# # print(np.shape(placidData[:, 0]))
+# # currError = (theoTorques - actTorque)
+# # ax1 = ax.plot(Command[:16], currError[:16], 'r^',
+# #               Command[16:], currError[16:], 'y^')
+# # plt.title('Brake Command Vs. Error')
+# # plt.legend(ax0, ('Lower Fit', 'Upper Fit'))
+# # plt.ylabel('Torque (in-lb)')
+# # plt.xlabel('Brake Command (%)')
+
+# plt.show()
 
 
-randata = np.loadtxt('data/RandomTest.csv', delimiter=',', comments='# ')
-# for i in range(np.shape(data)[0]):
-#         if data[i,4] < 0 or data[i,4] > 11:
-#             data[i,4] = np.nan
-ranBrakeStrength = np.loadtxt(
-    'data/BrakeCommandsRandomTest.csv', delimiter=',', comments='# ')
-# rancompData = arrange(randata, ranBrakeStrength, 'RandomTest.csv')
-# # plt.plot(BrakeStrength)
-# # plt.show()
+# randata = np.loadtxt('data/RandomTest.csv', delimiter=',', comments='# ')
+# # for i in range(np.shape(data)[0]):
+# #         if data[i,4] < 0 or data[i,4] > 11:
+# #             data[i,4] = np.nan
+# ranBrakeStrength = np.loadtxt(
+#     'data/BrakeCommandsRandomTest.csv', delimiter=',', comments='# ')
+# # rancompData = arrange(randata, ranBrakeStrength, 'RandomTest.csv')
+# # # plt.plot(BrakeStrength)
+# # # plt.show()
 
-rancompData = np.loadtxt('data/CompRandomTest.csv',
-                         delimiter=',', comments='#')
+# rancompData = np.loadtxt('data/CompRandomTest.csv',
+#                          delimiter=',', comments='#')
 
-cont.reset()
-rancompData = compData
-randTorques = rancompData[:, 2]
-theoRandCMDs, labels = cont.model(randTorques)
+# cont.reset()
+# rancompData = compData
+# randTorques = rancompData[:, 2]
+# theoRandCMDs, labels = cont.model(randTorques)
 
-fig2 = plt.figure()
-ax0 = fig2.add_subplot(111, projection='3d')
-# ax0.scatter(rancompData[:, 2], rancompData[:, 1], rancompData[:, 0],
-#             c='b', depthshade=False)
-ax0.scatter(rancompData[:, 2], rancompData[:, 1], theoRandCMDs - rancompData[:, 0],
-            c='r')
-plt.title('Brake Commands Vs. Torque')
-ax0.set_xlabel('Torque (in-lb)')
-ax0.set_ylabel(' Prev Torque (in-lb)')
-ax0.set_zlabel('Brake Command Error  (%)')
-# ax0.legend(('Actual CMD', 'Predicted CMD'))
-plt.show()
+# fig2 = plt.figure()
+# ax0 = fig2.add_subplot(111, projection='3d')
+# # ax0.scatter(rancompData[:, 2], rancompData[:, 1], rancompData[:, 0],
+# #             c='b', depthshade=False)
+# ax0.scatter(rancompData[:, 2], rancompData[:, 1], theoRandCMDs - rancompData[:, 0],
+#             c='r')
+# plt.title('Brake Commands Vs. Torque')
+# ax0.set_xlabel('Torque (in-lb)')
+# ax0.set_ylabel(' Prev Torque (in-lb)')
+# ax0.set_zlabel('Brake Command Error  (%)')
+# # ax0.legend(('Actual CMD', 'Predicted CMD'))
+# plt.show()
 
-fig2 = plt.figure()
-ax0 = fig2.add_subplot(111)
-ax0.plot(theoRandCMDs - rancompData[:, 0])
-plt.title('Brake Command Error over Time')
-plt.ylabel('Absolute Error')
-plt.xlabel('Brake Command (%)')
-plt.show()
-theoRandCMDs = np.asarray(theoRandCMDs).T
-print(np.shape(rancompData))
-theoRandCMDs= theoRandCMDs.reshape(-1,1)
-print(np.shape(theoRandCMDs))
+# fig2 = plt.figure()
+# ax0 = fig2.add_subplot(111)
+# ax0.plot(theoRandCMDs - rancompData[:, 0])
+# plt.title('Brake Command Error over Time')
+# plt.ylabel('Absolute Error')
+# plt.xlabel('Brake Command (%)')
+# plt.show()
+# theoRandCMDs = np.asarray(theoRandCMDs).T
+# print(np.shape(rancompData))
+# theoRandCMDs= theoRandCMDs.reshape(-1,1)
+# print(np.shape(theoRandCMDs))
 
-result = np.hstack(( rancompData,theoRandCMDs))
-np.savetxt('data/Result' + test, result,fmt='%.3f', delimiter=',', newline='\n',
-               header='Actual Command, Previous Torque, Measured Torque, Predicted Command', footer='', comments='# ')
+# result = np.hstack(( rancompData,theoRandCMDs))
+# np.savetxt('data/Result' + test, result,fmt='%.3f', delimiter=',', newline='\n',
+#                header='Actual Command, Previous Torque, Measured Torque, Predicted Command', footer='', comments='# ')

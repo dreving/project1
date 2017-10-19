@@ -46,7 +46,7 @@ of columns input voltage, current, label
     brakeStrength = np.random.random_integers(0, 1000, (trials,)) / 10.0
     if atrials > 0:
         step = 30
-        cutoff = 40
+        cutoff = 100
         asymSteps = np.zeros(atrials)
         for i in range(1, atrials // 2, 2):
             asymSteps[i] = min(1000 - cutoff, asymSteps[i - 1] + 2 *
@@ -140,7 +140,7 @@ of columns input voltage, current, label
 
     np.savetxt('data/' + fname, data, fmt='%.2f', delimiter=',', newline='\n',
                header='Time, setPoint, Actual Brake Current, prevsetPoint, MotorCurrent' 'MotorSpeed', footer='', comments='# ')
-    np.savetxt('data/BrakeCommands' + fname, brakeStrength, fmt='%d', delimiter=',', newline='\n',
+    np.savetxt('data/BrakeCommands' + fname, brakeStrength, fmt='%.1f', delimiter=',', newline='\n',
                header='', footer='', comments='# ')
     brake.setTorque(Mc, 0)
     print('brake command sent')
