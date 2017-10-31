@@ -2,7 +2,7 @@ import numpy as np
 import CalibrationMotorFunctions as CMF
 
 
-def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=150):
+def arrangeBrakeData(data, BrakeStrength, fname=None, timeLength=3, pts=150):
     # filter
     for i in range(np.shape(data)[0]):
         if data[i, 4] < 0 or data[i, 4] > 11:
@@ -27,8 +27,8 @@ def arrangeBrakeData(data, BrakeStrength, fname, timeLength=3, pts=150):
     # compData = np.vstack((BrakeStrength, prevStrength, avgTorque)).T
     compData = np.vstack((BrakeStrength, prevTorque, avgTorque)).T
     # load lake Placid data
-
-    np.savetxt('data/Comp' + fname, compData, fmt='%.3f', delimiter=',', newline='\n',
+    if fname is not None:
+        np.savetxt('data/Comp' + fname, compData, fmt='%.3f', delimiter=',', newline='\n',
                header='setPoint, prevsetPoint, Current', footer='', comments='# ')
 
     return compData

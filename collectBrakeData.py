@@ -66,7 +66,7 @@ of columns input voltage, current, label
         plt.plot(brakeStrength)
         plt.show()
     currentScale = 1000 / 100
-    motorSpeed = 5  # [20, 20, 20, 20, 20]
+    motorSpeed = 35  # [20, 20, 20, 20, 20]
     fullTime = timeLength * len(brakeStrength)
 
     rc = RoboClaw('COM11', 0x80)
@@ -98,7 +98,7 @@ of columns input voltage, current, label
         derror = error - lastError
         intError += error
         command = P * error + D * derror + I * intError
-        CMF.setMotorSpeed(rc, command)
+        # CMF.setMotorSpeed(rc, command)
         lastError = error
         brakeTorque = int(round(
             currentScale * brakeStrength[int(np.floor(currTime / timeLength))]))
@@ -136,7 +136,7 @@ of columns input voltage, current, label
         currTime = time.time() - start
 
     CMF.stopMotor(rc)
-    print('motor Stopped')
+    # print('motor Stopped')
 
     np.savetxt('data/' + fname, data, fmt='%.2f', delimiter=',', newline='\n',
                header='Time, setPoint, Actual Brake Current, prevsetPoint, MotorCurrent' 'MotorSpeed', footer='', comments='# ')

@@ -7,11 +7,13 @@ def itoT(i):
     # T = -92.74 + 0.0111 * np.sqrt(35872000 * i + 34699500)
     # T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000) #for motor speed 10
     T = -120.941 + 0.0111358 * np.sqrt(40160000 * i + 90000000) #for motor speed 5
+    T = -114.436 + 0.025641 * np.sqrt(7.8e6 * i + 1.52571e7)
+    # T = -14.7365 * ( 0.024695- i) 
     return T
 
 
-runs = 5
-fname = 'data/PG188PlacidStepwiseTest3.csv'
+runs = 3
+fname = 'data/PG188PlacidStepwiseTest11.csv'
 data = np.loadtxt(fname, delimiter=',', comments='# ')
 for i in range(np.shape(data)[0]):
     if data[i, 4] < 0 or data[i, 4] > 11:
@@ -24,18 +26,19 @@ brakeStrength = np.asarray(brakeStrength)
 
 # get average current values
 cmds = len(brakeStrength)
-timeLength = 5.0
-pts = 150
+timeLength = 3.0
+pts = 75
 avgCurrent = np.zeros((cmds, 1))
 ax = plt.subplot(121)
 # ax.plot(data[:,0],data[:,3],'k--')
 for t in range(cmds):
-    timeStart = int(timeLength * (t + .25) * pts)
-    timeEnd = int(timeLength * (t + .75) * pts)
+    timeStart = int(timeLength * (t + .5) * pts)
+    timeEnd = int(timeLength * (t + .90) * pts)
     avgCurrent[t] = np.nanmean(data[timeStart:timeEnd, 3])
-    # ax.plot(data[timeStart:timeEnd,0],data[timeStart:timeEnd,3])
+    ax.plot(data[timeStart:timeEnd,0],data[timeStart:timeEnd,3])
 
 # do Two Point current transformations
+plt.show()
 noLoadCurrent = avgCurrent[0]
 peakCurrent = np.amax(avgCurrent)
 motorTorquesTP = (115 - 2.5) / (peakCurrent - noLoadCurrent) * \
