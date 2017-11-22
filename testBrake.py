@@ -1,9 +1,11 @@
-# from collectBrakeData import collectBrakeData as collect
+from collectBrakeData import collectBrakeData as collect
 from arrangeBrakeData import arrangeBrakeData as arrange
 # from mvnaiveanalyze import mvnaiveanalyze as analyze
 # from sklearn.svm import SVC
 # from naiveanalyze import naiveanalyze as analyze
 import pickle
+import os
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -27,48 +29,64 @@ def gf(data, *args, **kwargs):
     return val
 
 
-test = 'PG188Test10.csv'
-trials = 100
-atrials = 350
-pts = 75
-(data, BrakeStrength) = collect(trials, test, pts=pts, atrials=atrials)
-data = np.loadtxt('data/' + test, delimiter=',', comments='# ')
-# for i in range(np.shape(data)[0]):
-#         if data[i,4] < 0 or data[i,4] > 11:
-#             data[i,4] = np.nan
-BrakeStrength = np.loadtxt('data/BrakeCommands' +
-                           test, delimiter=',', comments='# ')
+breed = 'PG188Test'
+
+testID = 17
+currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
+test = breed + str(testID)
+trials = 10
+atrials = 20
+if not os.path.exists(currdir):
+    os.makedirs(currdir)
+    if not os.path.exists(currdir + test + '.csv'):
+        (data, brakeStrength) = collect(trials, currdir, test, atrials=atrials)
+data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
+brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
+                           test + '.csv', delimiter=',', comments='# ')
 
 time = data[:, 0]
 # plot here
 ax = plt.subplot(411)
 ax.plot(time,
-        data[:, 2],)
+        data[:, 1],)
 # plt.legend()
 plt.title('Brake Command Vs. Time')
 plt.ylabel('Current (%)')
 plt.xlabel('Time(s)')
 ax1 = plt.subplot(412)
 ax1.plot(time,
-         data[:, 4], label='Motor Current')
+         data[:, -2], label='Motor Current')
 plt.legend()
 plt.title('Motor Current Vs. Time')
 plt.ylabel('Current (Amps)')
 plt.xlabel('Time(s)')
 ax2 = plt.subplot(413)
 ax2.plot(time,
-         data[:, 5])
+         data[:, -1])
 # plt.legend()
 plt.title('Speed Vs. Time')
 plt.ylabel('Speed (%)')
 plt.xlabel('Time(s)')
-
+plt.savefig(currdir + test + 'figure1.png')
 # plt.show()
-compData = arrange(data, BrakeStrength, test, pts=pts)
+compData = arrange(data, brakeStrength, currdir, test)
 # plt.plot(BrakeStrength)
 # plt.show()
 
-# compData = np.loadtxt('data/Comp' + test, delimiter=',', comments='#')
+with open(currdir + test + '.csv', newline='') as csvfile:
+            header = next(csv.reader(csvfile, delimiter=',', quotechar='|'))
+            header = ''.join(header)
+            print(header)
+            # import pts and timeLength here
+            l = []
+            for t in header.split():
+                try:
+                    l.append(float(t))
+                except ValueError:
+                    pass
+            if len(l) > 1:
+                trials = int(l[0])
+                atrials = int(l[1])
 fig = plt.figure()
 ax0 = fig.add_subplot(111, projection='3d')
 print(np.shape(compData))
@@ -80,7 +98,7 @@ ax0.set_ylabel(' Prev Brake Command (%)')
 ax0.set_zlabel('Torque (in-lb)')
 
 ax0 = fig.add_subplot(111, projection='3d')
-
+print(trials)
 ax0.scatter(compData[:trials, 0], compData[:trials, 1], compData[:trials, 2],
             c='k', depthshade=False)
 ax0.scatter(compData[trials:(trials + atrials // 2), 0], compData[trials:(trials + atrials // 2), 1], compData[trials:(trials + atrials // 2), 2],
@@ -101,38 +119,48 @@ ax0.set_zlabel('Torque (in-lb)')
 # ax1.set_ylabel(' Prev Brake Command (%)')
 # ax1.set_zlabel('Torque (in-lb)')
 ncompData = compData[:, (0, 2)]
-plt.show()
-rData = ncompData[trials:(trials + atrials // 2), :]
-fData = ncompData[(trials + atrials // 2):, :]
+plt.savefig(currdir + test + 'figure2.png')
+# plt.show()
+# if atrials > 0:
+#     rData = ncompData[trials:(trials + atrials // 2), :]
+#     fData = ncompData[(trials + atrials // 2):, :]
 
-base = min(rData[:, -1])
-top = max(fData[:, -1])
-rData = np.vstack((rData, np.tile([0, base], [50, 1])))
-fData = np.vstack((fData, np.tile([100, top], [500, 1])))
-# TODO add min and max values to increase weight
-clf, scaler = svm.build(rData, fData)
-with open('data/' + 'Controller' + '.pickle', 'wb') as f:
-    pickle.dump(clf, f)
-with open('data/' + 'Controller' + '.pickle', 'rb') as g:
-    clf = pickle.load(g)
-labels = svm.label(clf, scaler, ncompData)
+#     base = min(rData[:, -1])
+#     top = max(fData[:, -1])
+#     # rData = np.vstack((rData, np.tile([0, base], [50, 1])))
+#     # fData = np.vstack((fData, np.tile([100, top], [500, 1])))
+#     # TODO add min and max values to increase weight
+#     clf, scaler = svm.build(rData, fData)
+#     with open('data/' + 'Controller' + '.pickle', 'wb') as f:
+#         pickle.dump(clf, f)
+with open('data/' + 'BackupController' + '.pickle', 'rb') as g:
+    (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
+with open('data/' + 'boundP' + '.pickle', 'rb') as g:
+    boundP = pickle.load(g)
+# labels = svm.label(clf, scaler, ncompData)
+labels = svm.qlabel(boundP, ncompData)
+print(np.shape(labels))
+print(np.shape(ncompData))
 riseData, fallData = svm.split(compData, labels)
 
 
 # print(np.shape(riseData))
 fig2 = plt.figure()
 ax0 = fig2.add_subplot(111, )  # projection='3d')
+cmdRange = np.linspace(0.0, 100.0, 100)
+bpts = np.polyval(boundP, cmdRange)
 ax0.scatter(riseData[:, 0], riseData[:, -1],  # riseData[:, 2],
             c='r')
 ax0.scatter(fallData[:, 0], fallData[:, -1],  # fallData[:, 2],
             c='b', )  # depthshade=False)
+ax0.scatter(cmdRange, bpts, c='g')
 plt.title('Brake Commands Vs. Torque')
 ax0.set_xlabel('Brake Command (%)')
 ax0.set_ylabel(' Torque (%)')
 # ax0.set_zlabel('Torque (in-lb)')
-ax0.legend(('Lower Hysteresis Curve', 'Upper Hysteresis Curve'))
-plt.show()
-
+ax0.legend(('Lower Hysteresis Curve', 'Upper Hysteresis Curve', 'Boundary'))
+plt.savefig(currdir + test + 'figure3.png')
+# plt.show()
 
 # Try single variable analysis for each
 
@@ -186,20 +214,22 @@ placCMD = np.vstack((Command, prevStrength))
 
 # run function over percentages to get torques
 # brake = BrakeModel(clf, p1, p2)
-cont = Controller(clf, scaler, p1, riseXL, p2, fallXL)
+# cont = Controller(clf, scaler, p1, riseXL, p2, fallXL)
 controlP = (clf, scaler, p1, riseXL, p2, fallXL)
 with open('data/' + 'Controller' + '.pickle', 'wb') as f:
     pickle.dump(controlP, f)
-with open('data/' + 'Controller' + '.pickle', 'rb') as g:
-    (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
-cont = Controller(clf, scaler, p1, riseXL, p2, fallXL)
+# with open('data/' + 'Controller' + '.pickle', 'rb') as g:
+#     (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
+# with open('data/' + 'boundP' + '.pickle', 'rb') as g:
+#     boundP = pickle.load(g)
+cont = Controller(clf, scaler, p1, riseXL, p2, fallXL, boundP)
 # print(clf.coef_)
 # c = clf.coef_
 # c = c[0]
 # y = clf.intercept_
 # p3 = [-c[0] / c[1], -y/c[1]]
 # theoTorques, labels = brake.model(Command)
-theoCMDS, labels = cont.model(actTorque)
+theoCMDS, labels = cont.qmodel(actTorque)
 print(theoCMDS)
 print(labels)
 # theoTorques = gf(placCMD, *(p[0]), xPL=p[2])
@@ -212,10 +242,10 @@ ax = plt.subplot(111)
 #               theoTorques[:16], 'b^', Command[16:], theoTorques[16:], 'g^')
 
 cmdRange = np.linspace(0, 115, 100)
-# rpts = np.polyval(p1, cmdRange)
-# fpts = np.polyval(p2, cmdRange)
+rpts = np.polyval(p1[(riseXL - 1)::-1], cmdRange)
+fpts = np.polyval(p2[(fallXL - 1)::-1], cmdRange)
 ax0 = ax.plot(Command, actTorque, 'k--', theoCMDS[:16],
-              actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^',) # rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
+              actTorque[:16], 'b^', theoCMDS[16:], actTorque[16:], 'g^', rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
 plt.legend(ax0, ('PlacidData', 'Lower Fit', 'Upper Fit',
                  'Lower Polynomial', 'Upper Polynomial'))
 plt.title('Brake Command Vs. Torque')
@@ -239,53 +269,58 @@ plt.xlabel('Brake Command (%)')
 # plt.legend(ax0, ('Lower Fit', 'Upper Fit'))
 # plt.ylabel('Torque (in-lb)')
 # plt.xlabel('Brake Command (%)')
+plt.savefig(currdir + test + 'figure4.png')
+# plt.show()
+ranTestdir = 'data/PG188Test/RandomTest/'
 
-plt.show()
+if os.path.exists(ranTestdir):
 
+    randata = np.loadtxt(ranTestdir + 'RandomTest.csv',
+                         delimiter=',', comments='# ')
+    # for i in range(np.shape(data)[0]):
+    #         if data[i,4] < 0 or data[i,4] > 11:
+    #             data[i,4] = np.nan
+    ranBrakeStrength = np.loadtxt(
+        ranTestdir + 'BrakeCommandsRandomTest.csv', delimiter=',', comments='# ')
+    # rancompData = arrange(randata, ranBrakeStrength, 'RandomTest.csv')
+    # # plt.plot(BrakeStrength)
+    # # plt.show()
 
-randata = np.loadtxt('data/RandomTest.csv', delimiter=',', comments='# ')
-# for i in range(np.shape(data)[0]):
-#         if data[i,4] < 0 or data[i,4] > 11:
-#             data[i,4] = np.nan
-ranBrakeStrength = np.loadtxt(
-    'data/BrakeCommandsRandomTest.csv', delimiter=',', comments='# ')
-# rancompData = arrange(randata, ranBrakeStrength, 'RandomTest.csv')
-# # plt.plot(BrakeStrength)
-# # plt.show()
+    rancompData = np.loadtxt(ranTestdir + 'RandomTest.csv',
+                             delimiter=',', comments='#')
 
-rancompData = np.loadtxt('data/CompRandomTest.csv',
-                         delimiter=',', comments='#')
+    cont.reset()
+    # rancompData = compData
+    randTorques = rancompData[:, 2]
+    theoRandCMDs, labels = cont.qmodel(randTorques)
 
-cont.reset()
-rancompData = compData
-randTorques = rancompData[:, 2]
-theoRandCMDs, labels = cont.model(randTorques)
+    fig2 = plt.figure()
+    ax0 = fig2.add_subplot(111, projection='3d')
+    # ax0.scatter(rancompData[:, 2], rancompData[:, 1], rancompData[:, 0],
+    #             c='b', depthshade=False)
+    ax0.scatter(rancompData[:, 2], rancompData[:, 1], theoRandCMDs - rancompData[:, 0],
+                c='r')
+    plt.title('Brake Commands Vs. Torque')
+    ax0.set_xlabel('Torque (in-lb)')
+    ax0.set_ylabel(' Prev Torque (in-lb)')
+    ax0.set_zlabel('Brake Command Error  (%)')
+    # ax0.legend(('Actual CMD', 'Predicted CMD'))
+    plt.savefig(currdir + test + 'figure5.png')
+    # plt.show()
 
-fig2 = plt.figure()
-ax0 = fig2.add_subplot(111, projection='3d')
-# ax0.scatter(rancompData[:, 2], rancompData[:, 1], rancompData[:, 0],
-#             c='b', depthshade=False)
-ax0.scatter(rancompData[:, 2], rancompData[:, 1], theoRandCMDs - rancompData[:, 0],
-            c='r')
-plt.title('Brake Commands Vs. Torque')
-ax0.set_xlabel('Torque (in-lb)')
-ax0.set_ylabel(' Prev Torque (in-lb)')
-ax0.set_zlabel('Brake Command Error  (%)')
-# ax0.legend(('Actual CMD', 'Predicted CMD'))
-plt.show()
+    fig2 = plt.figure()
+    ax0 = fig2.add_subplot(111)
+    ax0.plot(theoRandCMDs - rancompData[:, 0])
+    plt.title('Brake Command Error over Time')
+    plt.ylabel('Absolute Error')
+    plt.xlabel('Brake Command (%)')
+    plt.savefig(currdir + test + 'figure6.png')
+    # plt.show()
+    theoRandCMDs = np.asarray(theoRandCMDs).T
+    print(np.shape(rancompData))
+    theoRandCMDs = theoRandCMDs.reshape(-1, 1)
+    print(np.shape(theoRandCMDs))
 
-fig2 = plt.figure()
-ax0 = fig2.add_subplot(111)
-ax0.plot(theoRandCMDs - rancompData[:, 0])
-plt.title('Brake Command Error over Time')
-plt.ylabel('Absolute Error')
-plt.xlabel('Brake Command (%)')
-plt.show()
-theoRandCMDs = np.asarray(theoRandCMDs).T
-print(np.shape(rancompData))
-theoRandCMDs= theoRandCMDs.reshape(-1,1)
-print(np.shape(theoRandCMDs))
-
-result = np.hstack(( rancompData,theoRandCMDs))
-np.savetxt('data/Result' + test, result,fmt='%.3f', delimiter=',', newline='\n',
+    result = np.hstack((rancompData, theoRandCMDs))
+    np.savetxt(currdir + 'Result' + test, result, fmt='%.3f', delimiter=',', newline='\n',
                header='Actual Command, Previous Torque, Measured Torque, Predicted Command', footer='', comments='# ')

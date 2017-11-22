@@ -6,15 +6,15 @@ import CalibrationMotorFunctions as CMF
 import brake
 
 timeLength = 3.0  # seconds
-pts = 75
-runs = 3
-pause = 40
+pts = 150
+runs = 5
+pause = 120
 brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
                  99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
-brakeStrength = brakeStrength * runs            
+brakeStrength = brakeStrength * runs
 #brakeStrength = [0, 100, 0]
 currentScale = 1000 / 100
-motorSpeed = 7.5  # [20, 20, 20, 20, 20]
+motorSpeed = 5  # [20, 20, 20, 20, 20]
 fullTime = timeLength * len(brakeStrength)
 rc = RoboClaw('COM11', 0x80)
 Nb, Mc = brake.initNebula()
@@ -31,14 +31,13 @@ for point in range(0, len(brakeStrength)):
     intError = 0
     lastError = 0
     # initialize Data
-    
 
     # Main Loop
 
-    CMF.setMotorSpeed(rc, motorSpeed*2)
+    CMF.setMotorSpeed(rc, motorSpeed)
     time.sleep(1)
     stepTime = 0.0
-    currTime = stepTime + timeLength*point
+    currTime = stepTime + timeLength * point
     start = time.time()
     while stepTime < timeLength:
         setSpeed = motorSpeed  # [int(np.floor(currTime / timeLength))]
@@ -77,13 +76,14 @@ for point in range(0, len(brakeStrength)):
         if loopTime < dt:
             time.sleep(dt - loopTime)
         stepTime = time.time() - start
-        currTime =stepTime + timeLength * point
+        currTime = stepTime + timeLength * point
     CMF.stopMotor(rc)
-    time.sleep(pause * brakeStrength[point]/100.0)
+    print('Step Completed: %d of %d' % (point, len(brakeStrength)))
+    time.sleep(pause * brakeStrength[point] / 100.0)
 
 
 CMF.stopMotor(rc)
-fname = 'data/PG188PlacidStepwiseTest12.csv'
+fname = 'data/PG188PlacidStepwiseTest13.csv'
 np.savetxt(fname, data, fmt='%.2f', delimiter=',', newline='\n',
            header='TimeStamp (s), BrakeCommand (%), Actual Brake Torque (%), Motor Current (A), Motor Speed (%)', footer='', comments='# ')
 

@@ -60,16 +60,18 @@ plt.contour(XX, YY, Z, colors=['k', 'k', 'k'],
 m = 110 / 90
 b1 = 10
 b2 = -20
-
+plt.show()
 boundpts = np.multiply((abs(Z) < 0.10), (-b1 < m * XX - YY)) > 0
 boundpts = np.multiply(boundpts, (-b2 > m * XX - YY)) > 0
 # print(boundpts)
 Xpts = XX[boundpts]
 Ypts = YY[boundpts]
 boundData = np.vstack((Xpts, Ypts))
+print(np.shape(boundData))
 # p= analyze(boundData.T,4,True)
-# with open('data/' + 'boundP' + '.pickle', 'wb') as f:
-#     pickle.dump(p, f)
+p = np.polyfit(boundData[0,:],boundData[-1,:],5)
+with open('data/' + 'boundP' + '.pickle', 'wb') as f:
+    pickle.dump(p, f)
 with open('data/' + 'boundP' + '.pickle', 'rb') as g:
     p = pickle.load(g)
 cmdRange = np.linspace(0, 100, 100)
@@ -82,21 +84,21 @@ plt.show()
 
 
 
-#Both O(n) wrt inputs
-#Polynomial 20x faster
-set1 = np.ones((1000000, 2))
-set2 = np.ones((10000000, 2))
-start = time.time()
-clf.predict(set1)
-svm1 = time.time() - start
-start = time.time()
-clf.predict(set2)
-svm2 = time.time() - start
-start = time.time()
-np.polyval(p, set1[:, 1])
-pv1 = time.time() - start
-start = time.time()
-np.polyval(p, set2[:, 1])
-pv2 = time.time() - start
-print((svm1, svm2, pv1, pv2))
-print((svm2 / svm1, pv2 / pv1))
+# #Both O(n) wrt inputs
+# #Polynomial 20x faster
+# set1 = np.ones((1000000, 2))
+# set2 = np.ones((10000000, 2))
+# start = time.time()
+# clf.predict(set1)
+# svm1 = time.time() - start
+# start = time.time()
+# clf.predict(set2)
+# svm2 = time.time() - start
+# start = time.time()
+# np.polyval(p, set1[:, 1])
+# pv1 = time.time() - start
+# start = time.time()
+# np.polyval(p, set2[:, 1])
+# pv2 = time.time() - start
+# print((svm1, svm2, pv1, pv2))
+# print((svm2 / svm1, pv2 / pv1))

@@ -72,4 +72,6 @@ def itoT(i):
     # T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000) # for motor speed 10
     T = -120.941 + 0.0111358 * \
          np.sqrt(40160000 * i + 90000000)  # for motor speed 5
+    # T = -114.436 + 0.025641 * np.sqrt(7.8e6 * i + 1.52571e7) # For Motor Speed 5 30 second Rest
+    # T = -132.179 + 0.079*np.sqrt(895000* i + 2.19199e6)
     return T
