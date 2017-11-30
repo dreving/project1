@@ -11,7 +11,7 @@ def build(riseData, fallData):
         (-1 * np.ones(len(riseData)), np.ones(len(fallData))))
     print(np.shape(trainData))
     print(np.shape(trainLabels))
-    clf = SVC(C=10, gamma=40, kernel='rbf', degree=1,)  # cache_size=7000)
+    clf = SVC(C=100, gamma=20, kernel='rbf', degree=1,)  # cache_size=7000)
     # C100000 G40 Best So far for rbf
     # C10 #G40 for x y
     clf.fit(trainData, trainLabels)

@@ -14,8 +14,8 @@ def itoT(i, p0,p1,p2,p3):
     return T
 
 
-runs = 1
-testID = 14
+runs = 5
+testID = 15
 test = breed + str(testID)
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 
@@ -25,8 +25,8 @@ brakeStrength = brakeStrength * runs
 # brakeStrength = [0, 100, 0]
 if not os.path.exists(currdir):
     os.makedirs(currdir)
-    if not os.path.exists(currdir + test + '.csv'):
-        (data, brakeStrength) = collect(brakeStrength, currdir, test)
+if not os.path.exists(currdir + test + '.csv'):
+    (data, brakeStrength) = collect(brakeStrength, currdir, test)
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
 brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
                            test + '.csv', delimiter=',', comments='# ')
@@ -77,7 +77,10 @@ print(p)
 # plot lake Placid data
 
 ax = plt.subplot(111)
-ax.plot(avgCurrent, placidData[:, 0])
+print(np.shape(avgCurrent))
+for r in range(runs):
+    ax.plot(avgCurrent[r*31:(31*r+16)], placidData[31*r:31*r+16, 0],'b--')
+    ax.plot(avgCurrent[r*31+16:(31*r+31)], placidData[31*r+16:31*r+31, 0],'r--')
 plt.title('Actual Current Vs. Placid Reported Torque')
 plt.ylabel('Torque (in-lb)')
 plt.xlabel('Current (Amps)')

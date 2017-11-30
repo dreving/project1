@@ -4,7 +4,7 @@ import numpy as np
 class Controller(object):
     def __init__(self, svm, scaler, risep, riseXL, fallp, fallXL, boundP):
         self.prevcmd = [0.0, 0.0]
-        self.torques = [1.25, 1.25]
+        self.torques = [0.0, 0.0]
         self.svm = svm
         self.scaler = scaler
         self.riseXL = riseXL

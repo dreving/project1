@@ -1,4 +1,0 @@
-import numpy as np
-
-def itoT(i):
-	T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000)

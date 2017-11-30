@@ -4,7 +4,7 @@ import csv
 
 
 def arrangeBrakeData(data, BrakeStrength, currdir, fname=None, timeLength=3, pts=150, convert=True):
-    # filter
+    # Import timeLength and pts from data, else use default
     if fname is not None:
         with open(currdir + fname + '.csv', newline='') as csvfile:
             header = next(csv.reader(csvfile, delimiter=',', quotechar='|'))
@@ -27,9 +27,15 @@ def arrangeBrakeData(data, BrakeStrength, currdir, fname=None, timeLength=3, pts
     cmds = len(BrakeStrength)
     avgCurrent = np.zeros((cmds, 1))
     for t in range(cmds):
-        timeStart = int(timeLength * (t + .25) * pts)
-        timeEnd = int(timeLength * (t + .75) * pts)
-        avgCurrent[t] = np.nanmean(data[timeStart:timeEnd, -2])
+        #typically .25 and .75
+        timeStart = int(timeLength * (t + .1) * pts)
+        timeEnd = int(timeLength * (t + .9) * pts)
+        #filter
+        udata = data[timeStart:timeEnd, -2]
+        umean = np.nanmean(udata)
+        ustd = np.nanstd(udata)
+        filteredData = udata[abs(udata - umean) < 2 * ustd]
+        avgCurrent[t] = np.nanmean(filteredData)
 
     # do Two Point current transformations
     if convert:

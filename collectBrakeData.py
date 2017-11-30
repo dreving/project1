@@ -51,8 +51,8 @@ of columns input voltage, current, label
     else:
         brakeStrength = np.random.random_integers(0, 1000, (trials,)) / 10.0
     if atrials > 0:
-        step = 60
-        cutoff = 100
+        step = 40
+        cutoff = 50
         asymSteps = np.zeros(atrials)
         for i in range(1, atrials // 2, 2):
             asymSteps[i] = min(1000 - cutoff, asymSteps[i - 1] + 2 *
@@ -91,8 +91,23 @@ of columns input voltage, current, label
     lastError = 0
     data = np.full([int(fullTime * pts), 5], np.nan)
     if pause <= 0:
-        CMF.setMotorSpeed(rc, motorSpeed)
-        time.sleep(1)
+
+        #warm-up
+        # CMF.setMotorSpeed(rc, motorSpeed)
+        # time.sleep(1)
+        print('Starting warmup')
+        start = time.time()
+        looptime = start
+        while looptime - start < 30:
+            setSpeed = motorSpeed  # [int(np.floor(currTime / timeLength))]
+            acSpeed = CMF.readAcSpeed(rc)
+            error = setSpeed - acSpeed
+            derror = error - lastError
+            intError += error
+            command = P * error + D * derror + I * intError
+            CMF.setMotorSpeed(rc, command)
+            lastError = error
+            looptime = time.time()
     for point in range(0, len(brakeStrength)):
 
         # initialize Data
