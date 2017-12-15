@@ -14,8 +14,8 @@ def itoT(i, p0,p1,p2,p3):
     return T
 
 
-runs = 5
-testID = 15
+runs = 1
+testID = 17
 test = breed + str(testID)
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 

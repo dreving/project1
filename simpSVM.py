@@ -28,8 +28,8 @@ def simplify(clf,scaler,convert=True):
         b2 = -20
     else:
         m = .1
-        b1 = .02
-        b2 = -1
+        b1 = -.75
+        b2 = -1.5
     
     boundpts = np.multiply((abs(Z) < 0.10), (-b1 < m * XX - YY)) > 0
     boundpts = np.multiply(boundpts, (-b2 > m * XX - YY)) > 0
@@ -41,7 +41,7 @@ def simplify(clf,scaler,convert=True):
     boundData = np.vstack((Xpts, Ypts))
     print(np.shape(boundData))
     # p= analyze(boundData.T,4,True)
-    p = np.polyfit(boundData[0, :], boundData[-1, :], 2)
+    p = np.polyfit(boundData[0, :], boundData[-1, :], 4)
     with open('data/' + 'boundP' + '.pickle', 'wb') as f:
         pickle.dump(p, f)
     return p

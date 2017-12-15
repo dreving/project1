@@ -34,14 +34,14 @@ def gf(data, *args, **kwargs):
 
 # file saving variables
 breed = 'PG188Test'
-testID = 'Stress15'
+testID = 'CoolDownTest38'
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 overwrite = False
 convert = False
 
 # test function parameters
-trials = [100, 1000] * 50
+trials = [100] * 5
 atrials = 0
 
 
@@ -49,7 +49,7 @@ atrials = 0
 if not os.path.exists(currdir):
     os.makedirs(currdir)
 if (overwrite or (not os.path.exists(currdir + test + '.csv'))):
-    (data, brakeStrength) = collect(trials, currdir, test, atrials=atrials,timeLength=3.0)
+    (data, brakeStrength) = collect(trials, currdir, test, atrials=atrials,timeLength=15,mode='temp',breed=breed)
 
 # loads data from previous test
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
@@ -59,6 +59,7 @@ brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
 
 # plot figure 1 here(Raw Data)
 time = data[:, 0]
+
 ax = plt.subplot(411)
 ax.plot(time,
         data[:, 1],)
@@ -66,20 +67,30 @@ ax.plot(time,
 plt.title('Brake Command Vs. Time')
 plt.ylabel('Current (%)')
 plt.xlabel('Time(s)')
+
 ax1 = plt.subplot(412)
 ax1.plot(time,
-         data[:, -2], label='Motor Current')
+         data[:, 3], label='Motor Current')
 plt.legend()
 plt.title('Motor Current Vs. Time')
 plt.ylabel('Current (Amps)')
 plt.xlabel('Time(s)')
+
 ax2 = plt.subplot(413)
 ax2.plot(time,
-         data[:, -1])
+         data[:, 4])
 # plt.legend()
 plt.title('Speed Vs. Time')
 plt.ylabel('Speed (%)')
 plt.xlabel('Time(s)')
+
+ax2 = plt.subplot(414)
+ax2.plot(time,
+         data[:, 5])
+plt.title('Motor Tenp Vs. Time')
+plt.ylabel('Temp (Celcius')
+plt.xlabel('Time(s)')
+
 plt.savefig(currdir + test + 'figure1.png')
 # plt.show()
 
@@ -193,9 +204,9 @@ fpoints[:, 1] = fpoints[:, 2] - fpoints[:, 1]
 # fits
 riseXL = 6
 fallXL = 6
-riseXY = xyFit(riseXL, 0)
+riseXY = xyFit(riseXL, 4)
 p1 = riseXY.fit(rpoints[:, (2, 1)], rpoints[:, 0])
-fallXY = xyFit(fallXL, 0)
+fallXY = xyFit(fallXL, 4)
 p2 = fallXY.fit(fpoints[:, (2, 1)], fpoints[:, 0])
 
 # deprecated fit styles
@@ -258,15 +269,16 @@ else:
     plt.xlabel('Brake Command (%)')
     plt.savefig(currdir + test + 'figure4.png')
 # plt.show()
-ranTestdir = 'data/PG188Test/PG188TestRandomTest/'
+ranTestdir = 'data/PG188Test/PG188TestNewCoolCalTest3/'
+ranTestname = 'PG188TestNewCoolCalTest3.csv'
 if os.path.exists(ranTestdir):
 
-    randata = np.loadtxt(ranTestdir + 'PG188TestRandomTest.csv',
+    randata = np.loadtxt(ranTestdir + ranTestname,
                          delimiter=',', comments='# ')
     ranBrakeStrength = np.loadtxt(
-        ranTestdir + 'BrakeCommandsPG188TestRandomTest.csv',
+        ranTestdir + 'BrakeCommands' +ranTestname,
         delimiter=',', comments='# ')
-    rancompData = np.loadtxt(ranTestdir + 'CompUnconverted' + 'PG188TestRandomTest.csv',
+    rancompData = np.loadtxt(ranTestdir + 'CompUnconverted' + ranTestname,
                              delimiter=',', comments='#')
 
     cont.reset()

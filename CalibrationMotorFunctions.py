@@ -41,7 +41,7 @@ def readSafeSpeed(rc):
 
 
 def readAcSpeed(rc):
-    return rc.read_speed(1)
+    return max(rc.read_speed(1), 0)
 
 
 def stopMotor(rc):
@@ -67,11 +67,22 @@ def readAvgCurrent(rc, secs, rate=100):
     return (avg, var)
 
 
+def compPWM(speed, torque):
+    if speed == 5:
+        pwm = 0.0004 * (torque ** 2) + 0.0965 * torque + 1.666 + speed #for 5
+    else:
+        pwm = 0.0011 * (torque **2) + 0.0318 * torque + speed
+    # B = 1.16
+    # M = .1404
+    # pwm = speed + B + M * torque
+    return pwm
+
+
 def itoT(i):
     # T = -92.74 + 0.0111 * np.sqrt(35872000 * i + 34699500)
     # T = -93.1563 + 0.00965487 * np.sqrt(46320000 * i + 56800000) # for motor speed 10
     T = -120.941 + 0.0111358 * \
-         np.sqrt(40160000 * i + 90000000)  # for motor speed 5
+        np.sqrt(40160000 * i + 90000000)  # for motor speed 5
     # T = -114.436 + 0.025641 * np.sqrt(7.8e6 * i + 1.52571e7) # For Motor Speed 5 30 second Rest
     # T = -132.179 + 0.079*np.sqrt(895000* i + 2.19199e6)
     return T
