@@ -1,0 +1,12 @@
+Coefficients Listed in Ascending Order C[0] + C[1]* X^1 + ...
+Boundary Inequality Function: Torque = f(Command Percentage)
+If Present Torque > f(present Command), use Upper Curve, else Lower Curve
+Boundary Coefficients Are:
+[  1.56373770e+00 ,   3.57055263e-01 ,  2.31400315e-02 , -2.12636333e-04 ,
+5.87280325e-07]
+Command Calculation Functions: Command = g(Torque)
+Lower Hysteresis Curve Coefficents Are:
+[  9.75539178e-01 ,  1.68816394e+00  , -3.06939933e-02 ,   4.46157341e-04
+-3.02579863e-06 ,  7.98265167e-09]
+Upper Hysteresis Curve Coefficents Are:
+[ -5.22503311e-01 ,   1.21285999e+00 ,  -8.04863117e-03 ,   4.40059349e-05]

@@ -6,7 +6,7 @@ from ard_T import Ard_T
 import time
 import matplotlib.pyplot as plt
 
-mode_dict = {'warmup': -1, 'settime': 0, 'temp': 1}
+mode_dict = {'warmup': -1, 'settime': 0, 'temp': 1, 'settemp': 2}
 warmup_time = 7.5
 
 
@@ -53,10 +53,10 @@ def collectBrakeData(trials, currdir, fname, timeLength=12, pts=50,
     warmupStrength = np.zeros(len(brakeStrength))
     if breed == 'PG188Test':
         warmupStrength[(trials + atrials // 2):] = np.ones(atrials // 2)
-    # elif breed == 'PG188PlacidStepwiseTest':
-    #     runs = len(brakeStrength)/31
-    #     for r in range(runs):
-    #         warmupStrength[(31*r+16):(31*r+31)] = np.full(16, )
+    elif breed == 'PG188PlacidStepwiseTest':
+        runs = len(brakeStrength) // 31
+        for r in range(runs):
+            warmupStrength[(31 * r + 15):(31 * r + 31)] = np.full(16, 100)
     elif breed == 'PendTest' and brakeStrength[0] > 50:
         warmupStrength = np.full(len(brakeStrength), 100)
 
@@ -64,13 +64,10 @@ def collectBrakeData(trials, currdir, fname, timeLength=12, pts=50,
 
     pause = 0
     motorSpeed = 45  # [20, 20, 20, 20, 20]
+    coolSpeed = 5
     fullTime = timeLength * len(brakeStrength)
 
-    # initialize devices
-    print('Initializing')
-    tc = Ard_T('COM3', 1)
-    rc = RoboClaw('COM11', 0x80)
-    Nb, Mc = brake.initNebula()
+    
 
     dt = 1.0 / pts
     P = 5  # 7
@@ -86,62 +83,79 @@ def collectBrakeData(trials, currdir, fname, timeLength=12, pts=50,
     if pause <= 0:
         pass
 
-    record = False
-    stretch = True
+
+
+    # initialize devices
+    print('Initializing')
+    tc = Ard_T('COM3', 1)
+    rc = RoboClaw('COM11', 0x80)
+    Nb, Mc = brake.initNebula()
+    print('Waiting for Motor to Cool Off')
+    while not(tc.isStartTemp()):
+        time.sleep(5)
+    print('Motor Temp in Safe Range')
+    record = False  # recording data
+    stretch = True  # cooled down, ramp back up to speed
+    jog = True  # warmed back up
+
     # Main Loop
     CMF.setMotorSpeed(rc, CMF.compPWM(motorSpeed, 0))
     time.sleep(0.5)
+    #############################MAIN LOOP START#################################################
     for point in range(0, len(brakeStrength)):
+        print(point + 1)
         commandSent = False
 
-        if modeID == mode_dict['settime'] and point % testSet == 0:
+        if point > 0 and (modeID == mode_dict['settime'] or modeID == mode_dict['settemp']) and point % testSet == 0:
+            jog = False
             stretch = False
             record = False
             brake.setTorque(Mc, 0)
         elif modeID == mode_dict['temp'] and not tc.isSafeTemp():
-            # print('cooldown')
+            print('cooldown')
+            jog = False
             stretch = False
             record = False
-            setSpeed = 20
             brake.setTorque(Mc, 0)
-        # if pause > 0:
-        #     intError = 0
-        #     lastError = 0
-        #     CMF.setMotorSpeed(rc, motorSpeed)
-        #     time.sleep(1)
         stepTime = 0.0
         currTime = stepTime + timeLength * point
         start = time.time()
         # PID loop begins here
         setSpeed = motorSpeed
-        try:
-            while stepTime < timeLength:
-                # setSpeed = motorSpeed  # [int(np.floor(currTime / timeLength))]
-                acSpeed = CMF.readAcSpeed(rc)
-                error = setSpeed - acSpeed
-                derror = error - lastError
-                intError += error
-                if record:
-                    tcmd = brakeStrength[point]
-                else:
-                    tcmd = 0
-                command = CMF.compPWM(setSpeed, tcmd) + P * \
-                    error + D * derror + I * intError
-                CMF.setMotorSpeed(rc, command)
-                lastError = error
-                if not(record) and point == 0:
-                    if (time.time() - start > warmup_time):# and tc.isStartTemp(tc):
-                        record = True
-                        stepTime = 0.0
-                        currTime = stepTime + timeLength * point
-                        start = time.time()
-                    else:
-                        stepTime = 0.0
-                        currTime = stepTime + timeLength * point
 
-                elif not stretch:
-                    # criteria to start recording for each mode
-                    ''' TODO
+       # try:
+        while stepTime < timeLength:
+            # setSpeed = motorSpeed  # [int(np.floor(currTime / timeLength))]
+            acSpeed = CMF.readAcSpeed(rc)
+            error = setSpeed - acSpeed
+            derror = error - lastError
+            intError += error
+            if record:
+                tcmd = brakeStrength[point]
+            else:
+                tcmd = 0
+            command = CMF.compPWM(setSpeed, tcmd) + P * \
+                error + D * derror + I * intError
+            CMF.setMotorSpeed(rc, command)
+            lastError = error
+            if not(record) and point == 0:
+                if (time.time() - start > warmup_time) and tc.isWarmTemp():
+                    print('warmed')
+                    record = True
+                    stepTime = 0.0
+                    currTime = stepTime + timeLength * point
+                    start = time.time()
+                else:
+                    stepTime = 0.0
+                    currTime = stepTime + timeLength * point
+
+################################COOLDOWN HERE########################################
+            elif not stretch:
+                decel = 0.05
+                if setSpeed > coolSpeed:
+                    setSpeed -= decel
+                # criteria to start recording for each mode
+                ''' TODO
                     1) Regive previous brake command
                     2) Measure this new torque to be given as previous torque
                     3) give proper torque command
@@ -152,81 +166,83 @@ def collectBrakeData(trials, currdir, fname, timeLength=12, pts=50,
                     what should it be? These are the questions for a wiser man
                     Intermediate Mode, add data to seventh column of future time
                     '''
-                    setSpeed = 20
-                    if modeID == 0 and time.time() - start > 60:
-                        # print('Warmup Done')
-                        stretch = True
-                        stepTime = 0.0
-                        currTime = stepTime + timeLength * point
-                        start = time.time()
-                        stretch = True
-                    elif modeID > 0 and tc.isStartTemp():
-                        stretch = True
-                        stepTime = 0.0
-                        currTime = stepTime + timeLength * point
-                        start = time.time()
-                        stretch = True
-                elif stretch and not record:  # warmup from cooldown, meaning motor has sufficiently waited, now need new prev torque data
-                    setSpeed = motorSpeed
-                    brakeTorque = int(
-                        round(currentScale * warmupStrength[point]))
-                    brake.setTorque(Mc, brakeTorque)
-                    stretchTime = time.time()
-                    if stretchTime - start < timeLength:
-                        data[int((np.floor((currTime + stretchTime - start) / dt))),
-                             6] = CMF.readInCurrent(rc)
-                    else:
-                        record = True
-                        stepTime = 0.0
-                        currTime = stepTime + timeLength * point
-                        start = time.time()
-
-                elif record:
-                    setSpeed = motorSpeed
-                    if not(commandSent):
-                        brakeTorque = int(round(
-                            currentScale * brakeStrength[int(np.floor(currTime / timeLength))]))
-                        brake.setTorque(Mc, brakeTorque)
-                        commandSent = True
-
-                    # Record Data here
-
-                    # TimeStamp
-                    data[int(np.floor(currTime / dt)),
-                         0] = currTime
-
-                    # Brake Command
-                    data[int(np.floor(currTime / dt)),
-                         1] = brakeStrength[int(np.floor(currTime / timeLength))]
-
-                    # Actual Brake Reading
-                    data[int(np.floor(currTime / dt)),
-                         2] = brake.readCurrent(Mc) / currentScale
-
-                    # Motor Current
-                    data[int(np.floor(currTime / dt)),
-                         3] = CMF.readInCurrent(rc)
-
-                    # Motor Speed
-                    data[int(np.floor(currTime / dt)), 4] = acSpeed
-                    # data[int(np.floor(currTime / dt)), 3] = setSpeed
-                    data[int(np.floor(currTime / dt)), 5] = tc.readTemp()
-                loopTime = time.time() - stepTime - start
-                if loopTime < dt:
-                    time.sleep(dt - loopTime)
-                if record:
-                    stepTime = time.time() - start
+                # setSpeed = coolSpeed
+                if modeID == 0 and time.time() - start > 60:
+                    # print('Warmup Done')
+                    stretch = True
+                    stepTime = 0.0
                     currTime = stepTime + timeLength * point
-            if pause > 0:
-                CMF.stopMotor(rc)
-                time.sleep(pause * brakeStrength[point] / 100.0)
-        except:
-            np.savetxt(currdir + fname + '.csv', data, fmt='%.2f', delimiter=',',
-                       newline='\n',
-                       header=('Time, setPoint, Actual Brake Current, MotorCurrent, MotorSpeed, Temperature, Warmup Current, trials: %d , atrials: %d , pts: %d , timeLength: %0.2f'
-                               % (trials, atrials, pts, timeLength)), footer='', comments='# ')
-            np.savetxt(currdir + 'BrakeCommands' + fname + '.csv', brakeStrength, fmt='%.1f',
-                       delimiter=',', newline='\n', header='', footer='', comments='# ')
+                    start = time.time()
+                elif modeID > 0 and tc.isStartTemp():
+                    stretch = True
+                    stepTime = 0.0
+                    currTime = stepTime + timeLength * point
+                    start = time.time()
+########################################Stretch, ramp back up to speed####################################################
+            elif not jog:
+                accel = 0.01
+                setSpeed += accel
+                if setSpeed >= motorSpeed:
+                    setSpeed = motorSpeed
+                    jog = True
+#########################JOG -RECORD MAKEUP PREVIOUS TORQUE##########################################################
+            elif jog and not record:  # warmup from cooldown, meaning motor has sufficiently waited, now need new prev torque data
+                setSpeed = motorSpeed
+                brakeTorque = int(
+                    round(currentScale * warmupStrength[point]))
+                brake.setTorque(Mc, brakeTorque)
+                stretchTime = time.time()
+                if stretchTime - start < timeLength:
+                    data[int((np.floor((currTime + stretchTime - start) / dt))),
+                         6] = CMF.readInCurrent(rc)
+                else:
+                    record = True
+                    stepTime = 0.0
+                    currTime = stepTime + timeLength * point
+                    start = time.time()
+#######################RECORDING DATA HERE#######################################################
+            elif record:
+                setSpeed = motorSpeed
+                if not(commandSent):
+                    brakeTorque = int(round(
+                        currentScale * brakeStrength[int(np.floor(currTime / timeLength))]))
+                    brake.setTorque(Mc, brakeTorque)
+                    commandSent = True
+
+                # TimeStamp
+                data[int(np.floor(currTime / dt)),
+                     0] = currTime
+
+                # Brake Command
+                data[int(np.floor(currTime / dt)),
+                     1] = brakeStrength[int(np.floor(currTime / timeLength))]
+
+                # Actual Brake Reading
+                data[int(np.floor(currTime / dt)),
+                     2] = brake.readCurrent(Mc) / currentScale
+
+                # Motor Current
+                data[int(np.floor(currTime / dt)),
+                     3] = CMF.readInCurrent(rc)
+
+                # Motor Speed
+                data[int(np.floor(currTime / dt)), 4] = acSpeed
+                # data[int(np.floor(currTime / dt)), 3] = setSpeed
+                data[int(np.floor(currTime / dt)), 5] = tc.readTemp()
+            loopTime = time.time() - stepTime - start
+            if loopTime < dt:
+                time.sleep(dt - loopTime)
+            if record:
+                stepTime = time.time() - start
+                currTime = stepTime + timeLength * point
+##########################END MAIN LOOP ##################################################
+        # except: #in case recording is interrupted
+        #     np.savetxt(currdir + fname + '.csv', data, fmt='%.2f', delimiter=',',
+        #                newline='\n',
+        #                header=('Time, setPoint, Actual Brake Current, MotorCurrent, MotorSpeed, Temperature, Warmup Current, trials: %d , atrials: %d , pts: %d , timeLength: %0.2f'
+        #                        % (trials, atrials, pts, timeLength)), footer='', comments='# ')
+        #     np.savetxt(currdir + 'BrakeCommands' + fname + '.csv', brakeStrength, fmt='%.1f',
+        #                delimiter=',', newline='\n', header='', footer='', comments='# ')
     # close everything and save
     # TODO save partial data set in case of crash with trys and accepts
     CMF.stopMotor(rc)

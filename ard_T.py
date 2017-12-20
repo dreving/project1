@@ -16,12 +16,20 @@ class Ard_T(object):
         return T
 
     def isSafeTemp(self):
-        crit = 30 #32
+        crit = 32  # 32
         return (self.readTemp() < crit)
 
     def isStartTemp(self):
-        crit = 28 #27
-        return (self.readTemp() < crit)
+        crit = 27  # 27
+        temp = self.readTemp()
+        # print(temp)
+        return (temp < crit)
+
+    def isWarmTemp(self):
+        crit = 27  # 32
+        temp = self.readTemp()
+        # print(temp)
+        return (temp > crit)
 
 # tc = Ard_T('COM3', 1)
 # while(True):

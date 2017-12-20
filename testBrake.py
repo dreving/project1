@@ -34,22 +34,31 @@ def gf(data, *args, **kwargs):
 
 # file saving variables
 breed = 'PG188Test'
-testID = 'CoolDownTest38'
+testID = 'CoolDownTest44'
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 overwrite = False
-convert = False
+convert = True
 
 # test function parameters
-trials = [100] * 5
-atrials = 0
+trials = 100
+atrials = 200
 
+# parameters to tune
+C = 100000
+gamma = 20
+boundXL = 4
+riseXL = 6
+fallXL = 4
+riseDXL = 0
+fallDXL = 0
 
 # makes filepath and runs test if it doesn't already exist
 if not os.path.exists(currdir):
     os.makedirs(currdir)
 if (overwrite or (not os.path.exists(currdir + test + '.csv'))):
-    (data, brakeStrength) = collect(trials, currdir, test, atrials=atrials,timeLength=15,mode='temp',breed=breed)
+    (data, brakeStrength) = collect(trials, currdir, test,
+                                    atrials=atrials, timeLength=15, mode='temp', breed=breed)
 
 # loads data from previous test
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
@@ -97,7 +106,7 @@ plt.savefig(currdir + test + 'figure1.png')
 
 compData = arrange(data, brakeStrength, currdir, test, convert=convert)
 
-# extra atrials and trials from file header
+# extract atrials and trials from file header
 with open(currdir + test + '.csv', newline='') as csvfile:
     header = next(csv.reader(csvfile, delimiter=',', quotechar='|'))
     header = ''.join(header)
@@ -148,10 +157,10 @@ if atrials > 0:
     # rData = np.vstack((rData, np.tile([0, base], [50, 1])))
     # fData = np.vstack((fData, np.tile([100, top], [500, 1])))
     # TODO add min and max values to increase weight
-    clf, scaler = svm.build(rData, fData)
+    clf, scaler = svm.build(rData, fData, C=C, gamma=gamma)
     with open('data/' + 'Controller' + '.pickle', 'wb') as f:
         pickle.dump(clf, f)
-    boundP = simpSVM.simplify(clf, scaler, convert=False)
+    boundP = simpSVM.simplify(clf, scaler, convert=convert, boundXL=boundXL)
 
 
 # with open('data/' + 'BackupController' + '.pickle', 'rb') as g:
@@ -160,8 +169,6 @@ if atrials > 0:
 #     boundP = pickle.load(g)
 # labels = svm.label(clf, scaler, ncompData)
 labels = svm.qlabel(boundP, ncompData)
-print(np.shape(labels))
-print(np.shape(ncompData))
 riseData, fallData = svm.split(compData, labels)
 
 
@@ -202,11 +209,10 @@ rpoints[:, 1] = rpoints[:, 2] - rpoints[:, 1]
 fpoints[:, 1] = fpoints[:, 2] - fpoints[:, 1]
 
 # fits
-riseXL = 6
-fallXL = 6
-riseXY = xyFit(riseXL, 4)
+
+riseXY = xyFit(riseXL, riseDXL)
 p1 = riseXY.fit(rpoints[:, (2, 1)], rpoints[:, 0])
-fallXY = xyFit(fallXL, 4)
+fallXY = xyFit(fallXL, fallDXL)
 p2 = fallXY.fit(fpoints[:, (2, 1)], fpoints[:, 0])
 
 # deprecated fit styles
@@ -261,9 +267,10 @@ else:
     cmdRange = np.linspace(0, 10, 100)
     rpts = np.polyval(p1[(riseXL - 1)::-1], cmdRange)
     fpts = np.polyval(p2[(fallXL - 1)::-1], cmdRange)
-    ax0 = ax.plot(rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')  # ,cmdRange,np.polyval(p3,cmdRange),'g--')
+    # ,cmdRange,np.polyval(p3,cmdRange),'g--')
+    ax0 = ax.plot(rpts, cmdRange, 'r--', fpts, cmdRange, 'b--')
     plt.legend(ax0, (
-                     'Lower Polynomial', 'Upper Polynomial'))
+        'Lower Polynomial', 'Upper Polynomial'))
     plt.title('Brake Command Vs. Torque')
     plt.ylabel('Torque (in-lb)')
     plt.xlabel('Brake Command (%)')
@@ -276,7 +283,7 @@ if os.path.exists(ranTestdir):
     randata = np.loadtxt(ranTestdir + ranTestname,
                          delimiter=',', comments='# ')
     ranBrakeStrength = np.loadtxt(
-        ranTestdir + 'BrakeCommands' +ranTestname,
+        ranTestdir + 'BrakeCommands' + ranTestname,
         delimiter=',', comments='# ')
     rancompData = np.loadtxt(ranTestdir + 'CompUnconverted' + ranTestname,
                              delimiter=',', comments='#')

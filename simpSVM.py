@@ -2,7 +2,8 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 
-def simplify(clf,scaler,convert=True):
+
+def simplify(clf, scaler, convert=True, boundXL=4):
     x_min = 0.0
     x_max = 100.0
     y_min = 0
@@ -24,24 +25,28 @@ def simplify(clf,scaler,convert=True):
                 linestyles=['--', '-', '--'], levels=[-.5, 0, .5])
     if convert:
         m = 110 / 90
-        b1 = 10
-        b2 = -20
+        b1 = 0
+        b2 = -12
     else:
         m = .1
         b1 = -.75
         b2 = -1.5
-    
-    boundpts = np.multiply((abs(Z) < 0.10), (-b1 < m * XX - YY)) > 0
+
+    boundpts = np.multiply((abs(Z) < 0.15), (-b1 < m * XX - YY)) > 0
     boundpts = np.multiply(boundpts, (-b2 > m * XX - YY)) > 0
     # print(boundpts)
     Xpts = XX[boundpts]
     Ypts = YY[boundpts]
-    plt.plot(Xpts,Ypts, 'g^')
+    plt.plot(Xpts, Ypts, 'g^')
+    scopeLinspace = np.linspace(x_min, x_max)
+    scope1 = scopeLinspace * m + b1
+    scope2 = scopeLinspace * m + b2
+    plt.plot(scopeLinspace, scope1, 'k--')
+    plt.plot(scopeLinspace, scope2, 'k--')
     plt.show()
     boundData = np.vstack((Xpts, Ypts))
-    print(np.shape(boundData))
     # p= analyze(boundData.T,4,True)
-    p = np.polyfit(boundData[0, :], boundData[-1, :], 4)
+    p = np.polyfit(boundData[0, :], boundData[-1, :], boundXL)
     with open('data/' + 'boundP' + '.pickle', 'wb') as f:
         pickle.dump(p, f)
     return p

@@ -9,13 +9,13 @@ import os
 breed = 'PG188PlacidStepwiseTest'
 
 
-def itoT(i, p0,p1,p2,p3):
-    T = p0 + p1 * np.sqrt(p2 * i + p3)
+def itoT(i, p0,p1,p2):
+    T = p0 + p1 * np.sqrt(i + p2)
     return T
 
 
 runs = 1
-testID = 17
+testID = 26
 test = breed + str(testID)
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 
@@ -26,30 +26,42 @@ brakeStrength = brakeStrength * runs
 if not os.path.exists(currdir):
     os.makedirs(currdir)
 if not os.path.exists(currdir + test + '.csv'):
-    (data, brakeStrength) = collect(brakeStrength, currdir, test)
+    (data, brakeStrength) = collect(brakeStrength, currdir, test, timeLength=16,mode='settemp', testSet=16,breed=breed)
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
 brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
                            test + '.csv', delimiter=',', comments='# ')
 # plot here
 time = data[:, 0]
-ax = plt.subplot(311)
+
+ax = plt.subplot(411)
 ax.plot(time,
-        data[:, 2])
+        data[:, 1],)
 # plt.legend()
 plt.title('Brake Command Vs. Time')
 plt.ylabel('Current (%)')
 plt.xlabel('Time(s)')
-ax1 = plt.subplot(312)
-ax1.plot(time, data[:, -2], label='Motor Current')
+
+ax1 = plt.subplot(412)
+ax1.plot(time,
+         data[:, 3], label='Motor Current')
 plt.legend()
 plt.title('Motor Current Vs. Time')
 plt.ylabel('Current (Amps)')
 plt.xlabel('Time(s)')
-ax2 = plt.subplot(313)
-ax2.plot(time, data[:, -1])
+
+ax2 = plt.subplot(413)
+ax2.plot(time,
+         data[:, 4])
 # plt.legend()
 plt.title('Speed Vs. Time')
 plt.ylabel('Speed (%)')
+plt.xlabel('Time(s)')
+
+ax2 = plt.subplot(414)
+ax2.plot(time,
+         data[:, 5])
+plt.title('Motor Tenp Vs. Time')
+plt.ylabel('Temp (Celcius')
 plt.xlabel('Time(s)')
 plt.savefig(currdir + test + 'figure1.png')
 # plt.show()
@@ -68,7 +80,7 @@ placidData = np.tile(placidData, (runs, 1))
 
 # replace with square root fit
 # p = analyze(currTorData, 2, True)
-p, cov = curve_fit(itoT, avgCurrent, placidData[:, 0],[-121,0.0111,40160000,900000000] )
+p, cov = curve_fit(itoT, avgCurrent, placidData[:, 0],[-121,0.0111*np.sqrt(40160000),900000000/40160000] )
 print(p)
 
 

@@ -3,15 +3,13 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 
 
-def build(riseData, fallData):
+def build(riseData, fallData, C=100000, gamma=20):
     trainData = np.vstack((riseData, fallData))
     scaler = StandardScaler()
     trainData = scaler.fit_transform(trainData)
     trainLabels = np.hstack(
         (-1 * np.ones(len(riseData)), np.ones(len(fallData))))
-    print(np.shape(trainData))
-    print(np.shape(trainLabels))
-    clf = SVC(C=10, gamma=20, kernel='rbf', degree=1,)  # cache_size=7000)
+    clf = SVC(C=C, gamma=gamma, kernel='rbf', degree=1,)  # cache_size=7000)
     # C100000 G40 Best So far for rbf
     # C10 #G40 for x y
     clf.fit(trainData, trainLabels)
@@ -45,5 +43,5 @@ def qlabel(boundP, fullData):
             fullLabels[i] = 1
         elif np.polyval(boundP, fullData[i, 0]) >= fullData[i, -1]:
             fullLabels[i] = -1
-        print(np.polyval(boundP, fullData[i, 0]),fullData[i, -1], fullLabels[i])
+        # print(np.polyval(boundP, fullData[i, 0]),fullData[i, -1], fullLabels[i])
     return fullLabels
