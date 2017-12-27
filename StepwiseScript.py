@@ -15,7 +15,7 @@ def itoT(i, p0,p1,p2):
 
 
 runs = 1
-testID = 26
+testID = 27
 test = breed + str(testID)
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 
@@ -26,7 +26,7 @@ brakeStrength = brakeStrength * runs
 if not os.path.exists(currdir):
     os.makedirs(currdir)
 if not os.path.exists(currdir + test + '.csv'):
-    (data, brakeStrength) = collect(brakeStrength, currdir, test, timeLength=16,mode='settemp', testSet=16,breed=breed)
+    (data, brakeStrength) = collect(brakeStrength, currdir, test, timeLength=12,mode='settemp', testSet=16,breed=breed)
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
 brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
                            test + '.csv', delimiter=',', comments='# ')
@@ -61,7 +61,7 @@ ax2 = plt.subplot(414)
 ax2.plot(time,
          data[:, 5])
 plt.title('Motor Tenp Vs. Time')
-plt.ylabel('Temp (Celcius')
+plt.ylabel('Temp (Celsius)')
 plt.xlabel('Time(s)')
 plt.savefig(currdir + test + 'figure1.png')
 # plt.show()

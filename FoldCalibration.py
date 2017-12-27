@@ -46,9 +46,9 @@ overwrite = False
 convert = True
 
 # parameters to tune
-C=100000 
-gamma=20
-boundXL = 4
+C=1000 
+gamma=1
+boundXL = 3
 riseXL = 6
 fallXL = 4
 riseDXL = 0
@@ -141,7 +141,7 @@ for i in range(numTests):
         # TODO add min and max values to increase weight
         clf, scaler = svm.build(rData, fData,C=C, gamma=gamma)
         boundP = simpSVM.simplify(clf, scaler, convert=convert,
-                                  boundXL=boundXL)
+                                  boundXL=boundXL,test=test)
 
     labels = svm.qlabel(boundP, ncompData)
     riseData, fallData = svm.split(compData, labels)

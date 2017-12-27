@@ -20,55 +20,70 @@ def pendTorqueList(pivot, start, end, inc, runs):
     return torqueList
 
 
-testID = 11
+testID = 'RandomTorqueSeed44-Avg of Curves'
 test = breed + str(testID)
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
+np.random.seed(44)
 if not os.path.exists(currdir):
     os.makedirs(currdir)
-torqueList = pendTorqueList(0.0, 0.0, 110.0, 30, 1)
+# torqueList = pendTorqueList(115.0, 110.0, 0.0, -10, 1)
+torqueList = np.random.random_integers(0, 1000, 20) / 10.0
 print(torqueList)
+trialTicks = []
+for torque in torqueList:
+    trialTicks.append(str(torque) + ' in-lb')
+trialTicks = tuple(trialTicks)
 # 1 / 0
 # Build Model
-with open('data/' + 'BackupController' + '.pickle', 'rb') as g:
+with open('data/' + 'ControllerI3' + '.pickle', 'rb') as g:
     (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
-with open('data/' + 'boundP' + '.pickle', 'rb') as g:
+with open('data/' + 'boundPI3' + '.pickle', 'rb') as g:
     boundP = pickle.load(g)
 cont = Controller(clf, scaler, p1, riseXL, p2, fallXL, boundP)
-# print(riseXL)
-# print(p1[5::-1])
-# p3 = p1[-1:5:-1]
-# p3 = np.append(p3,0)
-# print(p3)
-# print(np.polyval(p1[5::-1],74)+np.polyval(p3,74))
-# Convert to Brake Commands
-# print(cont.model([74.0]))
-brakeStrength, labels = cont.qmodel(torqueList)
+
+brakeStrength, labels = cont.qmodel_low(torqueList)
 for i in range(len(brakeStrength)):
     brakeStrength[i] = min(max(brakeStrength[i], 0.0), 100.0)
 
-print(brakeStrength)
 # 1/0
 # Execute Brake Commands
 # What to do about wait time
-(data, brakeStrength) = collect(brakeStrength, currdir, test)
-compData = arrange(data, brakeStrength, currdir, test)
+if not os.path.exists(currdir + test + '.csv'):
+    (data, brakeStrength) = collect(brakeStrength, currdir,
+                                    test, timeLength=15, mode='warmup', testSet=2, breed=breed,stepwise=True)
+data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
+brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
+                           test + '.csv', delimiter=',', comments='# ')
+compData = arrange(data, brakeStrength, currdir, test, )
 realTorques = compData[:, -1]
-error = torqueList - realTorques
-fig = plt.figure()
-ax0 = fig.add_subplot(211)
+error = realTorques - torqueList
+fig = plt.figure(figsize=(2000/120, 800/120))
+ax0 = fig.add_subplot(111)
 # ax0.scatter(rancompData[:, 2], rancompData[:, 1], rancompData[:, 0],
 #             c='b', depthshade=False)
-ax0.plot(realTorques)
-ax0.plot(torqueList)
+ax0.scatter(range(len(trialTicks)), realTorques,marker="X")
+ax0.scatter(range(len(trialTicks)), torqueList,marker="X")
 plt.title('Actual Torque vs Command')
 ax0.set_xlabel('Datapoint')
+plt.xticks(range(len(trialTicks)), trialTicks, rotation=17)
 ax0.set_ylabel('Torque (in-lb)')
 ax0.legend(('Measured Torque', 'Command'))
-
-ax1 = fig.add_subplot(212)
-ax1.plot(error)
-plt.title('Error of Torque Command')
-plt.ylabel('Torque (in-lb)')
-plt.xlabel('Datapoint')
+plt.tight_layout()
 plt.savefig(currdir + test + 'figure1.png')
+plt.show()
+fig = plt.figure(figsize=(2000/120, 800/120))
+ax1 = fig.add_subplot(211)
+ax1.scatter(range(len(trialTicks)), error,marker="X")
+plt.title('Error of Torque Command')
+plt.ylabel('Error(in-lb)')
+plt.xlabel('Datapoint')
+plt.xticks(range(len(trialTicks)), trialTicks, rotation=17)
+ax1 = fig.add_subplot(212)
+ax1.scatter(range(len(trialTicks)), 100 * abs(error) / torqueList,marker="X")
+plt.title('Error of Torque Command')
+plt.ylabel('Error(%)')
+plt.xlabel('Datapoint')
+plt.xticks(range(len(trialTicks)), trialTicks, rotation=17)
+plt.tight_layout()
+plt.savefig(currdir + test + 'figure2.png')
 plt.show()

@@ -16,17 +16,19 @@ class Ard_T(object):
         return T
 
     def isSafeTemp(self):
-        crit = 32  # 32
-        return (self.readTemp() < crit)
+        crit = 35  # 32
+        temp = self.readTemp()
+        print(temp)
+        return (temp < crit)
 
     def isStartTemp(self):
-        crit = 27  # 27
+        crit = 25  # 27
         temp = self.readTemp()
         # print(temp)
         return (temp < crit)
 
     def isWarmTemp(self):
-        crit = 27  # 32
+        crit = 20  # 32
         temp = self.readTemp()
         # print(temp)
         return (temp > crit)

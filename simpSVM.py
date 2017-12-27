@@ -3,15 +3,15 @@ import pickle
 import matplotlib.pyplot as plt
 
 
-def simplify(clf, scaler, convert=True, boundXL=4):
-    x_min = 0.0
-    x_max = 100.0
-    y_min = 0
+def simplify(clf, scaler, convert=True, boundXL=4,test=None):
+    x_min = -5.0
+    x_max = 105.0
+    y_min = 1
     y_max = 120.0
     if not(convert):
         y_max = 10.0
 
-    XX, YY = np.mgrid[x_min:x_max:200j, y_min:y_max:200j]
+    XX, YY = np.mgrid[x_min:x_max:400j, y_min:y_max:400j]
     # scale here brah
     data = np.c_[XX.ravel(), YY.ravel()]
     sData = scaler.transform(data)
@@ -25,14 +25,14 @@ def simplify(clf, scaler, convert=True, boundXL=4):
                 linestyles=['--', '-', '--'], levels=[-.5, 0, .5])
     if convert:
         m = 110 / 90
-        b1 = 0
-        b2 = -12
+        b1 = 15
+        b2 = -25
     else:
         m = .1
         b1 = -.75
         b2 = -1.5
 
-    boundpts = np.multiply((abs(Z) < 0.15), (-b1 < m * XX - YY)) > 0
+    boundpts = np.multiply((abs(Z) < 0.10), (-b1 < m * XX - YY)) > 0
     boundpts = np.multiply(boundpts, (-b2 > m * XX - YY)) > 0
     # print(boundpts)
     Xpts = XX[boundpts]
@@ -43,6 +43,8 @@ def simplify(clf, scaler, convert=True, boundXL=4):
     scope2 = scopeLinspace * m + b2
     plt.plot(scopeLinspace, scope1, 'k--')
     plt.plot(scopeLinspace, scope2, 'k--')
+    if test is not None:
+        plt.title(test)
     plt.show()
     boundData = np.vstack((Xpts, Ypts))
     # p= analyze(boundData.T,4,True)

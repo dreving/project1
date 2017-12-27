@@ -1,6 +1,12 @@
 import numpy as np
 import CalibrationMotorFunctions as CMF
 import csv
+from scipy.optimize import curve_fit
+
+
+def itoT(i, p0, p1, p2):
+    T = p0 + p1 * np.sqrt(i + p2)
+    return T
 
 
 def arrangeBrakeData(data, BrakeStrength, currdir, fname=None, timeLength=3,
@@ -46,7 +52,26 @@ def arrangeBrakeData(data, BrakeStrength, currdir, fname=None, timeLength=3,
             stretchCol[t] = np.nanmean(filteredData)
     # do Two Point current transformations
     if convert:
-        avgTorque = CMF.itoT(avgCurrent)
+        p0 = None
+        p1 = None
+        p2 = None
+        placidData = np.genfromtxt('data/ActualPlacidData.csv', delimiter=',')
+        placidData[0, 0] = 1.13
+        if all(BrakeStrength[v] == placidData[v,1] for v in range(31)):
+            print('Converted')
+            stepwisecurr = avgCurrent[:31]
+            np.reshape(stepwisecurr,(31,))
+            print(np.shape(stepwisecurr))
+            print(np.shape(placidData[:, 0]))
+            p, cov = curve_fit(
+                itoT, stepwisecurr[:,0], placidData[:, 0], [-121, 0.0111 * np.sqrt(40160000), 900000000 / 40160000])
+            p0 = p[0]
+            p1 = p[1]
+            p2 = p[2]
+            BrakeStrength = BrakeStrength[31:]
+            avgCurrent = avgCurrent[31:]
+            cmds = len(BrakeStrength)
+        avgTorque = CMF.itoT(avgCurrent, p0, p1, p2)
         # for i in range(len(avgTorque)):
         #     avgTorque[i] = max(1.25, avgTorque[i])
         avgTorque = avgTorque[:, 0]

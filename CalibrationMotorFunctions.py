@@ -78,10 +78,13 @@ def compPWM(speed, torque):
     return pwm
 
 
-def itoT(i):
-    p0 = -93.1
-    p1 = 67.94
-    p2 = 1.297
+def itoT(i,p0=None, p1=None,p2=None):
+    if p0 is None:
+        p0 = -93.1
+    if p1 is None:
+        p1 = 67.94
+    if p2 is None:
+        p2 = 1.297
+
     T = p0 + p1 * np.sqrt(i + p2)
-    return T
     return T

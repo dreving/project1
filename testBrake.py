@@ -34,7 +34,7 @@ def gf(data, *args, **kwargs):
 
 # file saving variables
 breed = 'PG188Test'
-testID = 'CoolDownTest44'
+testID = 'IntegratedStepTest3'
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 overwrite = False
@@ -45,9 +45,9 @@ trials = 100
 atrials = 200
 
 # parameters to tune
-C = 100000
-gamma = 20
-boundXL = 4
+C = 1000
+gamma = 1
+boundXL = 3
 riseXL = 6
 fallXL = 4
 riseDXL = 0
@@ -58,7 +58,7 @@ if not os.path.exists(currdir):
     os.makedirs(currdir)
 if (overwrite or (not os.path.exists(currdir + test + '.csv'))):
     (data, brakeStrength) = collect(trials, currdir, test,
-                                    atrials=atrials, timeLength=15, mode='temp', breed=breed)
+                                    atrials=atrials, timeLength=15, mode='temp', breed=breed,stepwise=True)
 
 # loads data from previous test
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
@@ -97,7 +97,7 @@ ax2 = plt.subplot(414)
 ax2.plot(time,
          data[:, 5])
 plt.title('Motor Tenp Vs. Time')
-plt.ylabel('Temp (Celcius')
+plt.ylabel('Temp (Celsius)')
 plt.xlabel('Time(s)')
 
 plt.savefig(currdir + test + 'figure1.png')
@@ -196,13 +196,15 @@ plt.savefig(currdir + test + 'figure3.png')
 # Add intercepts here
 base = min(riseData[:, -1])
 top = max(fallData[:, -1])
+base = 1.25
+top = 115
 
 # points to determine fit #This introduces fake derivative point but
 # points reaching the bottom should be the same anyway...
 rpoints = np.vstack(
-    (riseData[:, (0, 1, 2)], np.tile([100, top, top], [25, 1])))
+    (riseData[:, (0, 1, 2)], np.tile([100, top, top], [1, 1])))
 fpoints = np.vstack(
-    (fallData[:, (0, 1, 2)], np.tile([0, base, base], [25, 1])))
+    (fallData[:, (0, 1, 2)], np.tile([0, base, base], [1, 1])))
 
 # derivative
 rpoints[:, 1] = rpoints[:, 2] - rpoints[:, 1]
