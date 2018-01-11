@@ -28,7 +28,7 @@ class Ard_T(object):
         return (temp < crit)
 
     def isWarmTemp(self):
-        crit = 20  # 32
+        crit = 15  # 32
         temp = self.readTemp()
         # print(temp)
         return (temp > crit)

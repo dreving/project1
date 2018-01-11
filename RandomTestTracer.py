@@ -17,13 +17,13 @@ from BrakeController import Controller
 def update_lines(num, torque, testData, testLine, conData, conLine):
     if num % 2 == 0: 
         testLine.set_data(testData[..., :num//2],torque[...,:num//2])
-    else:
-        conLine.set_data(conData[..., :num//2],torque[...,:num//2])
+    # else:
+    #     conLine.set_data(conData[..., :num//2],torque[...,:num//2])
     return testLine, conLine
 
 
 breed = 'PG188Test'
-testID = 'IntegratedRandom'
+testID = 'TumbleTest5Salvation'
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 # import data
@@ -35,9 +35,9 @@ theoRandCMDs = np.zeros((len(cmds), 1))
 labels = np.zeros((len(cmds), 1))
 
 # import Controller
-with open('data/' + 'Controller' + '.pickle', 'rb') as g:
+with open('data/' + 'ControllerI3' + '.pickle', 'rb') as g:
     (clf, scaler, p1, riseXL, p2, fallXL) = pickle.load(g)
-with open('data/' + 'boundP' + '.pickle', 'rb') as g:
+with open('data/' + 'boundPI3' + '.pickle', 'rb') as g:
     boundP = pickle.load(g)
 cont = Controller(clf, scaler, p1, riseXL, p2, fallXL, boundP)
 
@@ -56,7 +56,8 @@ for i in range(len(cmds)):
 #animate results over placid graph #################################################
 # Set up formatting for the movie files
 Writer = animation.writers['ffmpeg']
-writer = Writer(fps=2, metadata=dict(artist='Me'), bitrate=3600)
+writer = Writer(fps=5, metadata=dict(artist='Me'), bitrate=3600)
+m=10/12.5
 
 
 fig1 = plt.figure()

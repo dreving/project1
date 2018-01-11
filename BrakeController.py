@@ -13,7 +13,7 @@ class Controller(object):
         self.fallp = fallp
         self.boundP = boundP
 
-    def qmodel(self, torques,*args):
+    def qmodel(self, torques, *args):
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)
@@ -34,7 +34,7 @@ class Controller(object):
             self.torques.append(torques[i])
         return (cmds, labels)
 
-    def qmodel2(self, torques,*args):
+    def qmodel2(self, torques, *args):
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)
@@ -55,7 +55,7 @@ class Controller(object):
             self.torques.append(torques[i])
         return (cmds, labels)
 
-    def qmodel_low(self, torques,*args):
+    def qmodel_low(self, torques, *args):
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)
@@ -76,7 +76,7 @@ class Controller(object):
             self.torques.append(torques[i])
         return (cmds, labels)
 
-    def qmodel_split(self, torques,*args):
+    def qmodel_split(self, torques, *args):
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)
@@ -88,14 +88,15 @@ class Controller(object):
                 [torques[i], torques[i] - self.torques[-1]]).T
             # print (np.shape(datapoint))
             if True:
-                cmds[i] = (self.riseEval(datapoint) + self.fallEval(datapoint))/2
+                cmds[i] = (self.riseEval(datapoint) +
+                           self.fallEval(datapoint)) / 2
                 labels[i] = 0
 
             self.prevcmd.append(cmds[i])
             self.torques.append(torques[i])
         return (cmds, labels)
 
-    def model(self, torques,*args):
+    def model(self, torques, *args):
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)
@@ -116,8 +117,8 @@ class Controller(object):
             self.torques.append(torques[i])
         return (cmds, labels)
 
-    def fbqmodel(self, torques,actcmds):
-        #model with feedback, auto set settings back to right command
+    def fbqmodel(self, torques, actcmds):
+        # model with feedback, auto set settings back to right command
         cmds = np.full(len(torques), np.nan)
         labels = np.full(len(torques), np.nan)
         torques = np.asarray(torques, dtype=np.float64)

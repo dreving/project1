@@ -18,6 +18,17 @@ from xyFit import *
 # function for using parameters found by xfit
 
 
+def tumble(peak, base, dec, trials):
+    tumList = []
+    for t in range(trials):
+        if peak > base:
+            tumList.extend(np.arange(peak, base - 1, -dec))
+        else:
+            tumList.extend(np.arange(peak, base + 1, dec))
+        dec += 1
+    return tumList
+
+
 def gf(data, *args, **kwargs):
     val = args[0]
     # global xParamLength
@@ -34,15 +45,49 @@ def gf(data, *args, **kwargs):
 
 # file saving variables
 breed = 'PG188Test'
-testID = 'IntegratedStepTest3'
+testID = 'TumbleTest7Sarah'
 currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 overwrite = False
 convert = True
 
 # test function parameters
-trials = 100
-atrials = 200
+trials = []
+# trials = tumble(90, 70, 3, 1)
+# trials.append(0)
+# trials.extend(tumble(80, 60, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(70, 50, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(60, 40, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(50, 30, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(40, 20, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(30, 10, 3, 1))
+# trials.append(0)
+# trials.extend(tumble(20, 0, 3, 1))
+trials.append(100)
+trials.extend(tumble(90, 100, 2, 1))
+trials.append(100)
+trials.extend(tumble(80, 100, 2, 1))
+trials.append(100)
+trials.extend(tumble(70, 100, 2, 1))
+trials.append(100)
+trials.extend(tumble(60, 100, 1, 1))
+trials.append(100)
+trials.extend(tumble(50, 100, 1, 1))
+trials.append(100)
+trials.extend(tumble(40, 90, 1, 1))
+trials.append(100)
+trials.extend(tumble(30, 75, 1, 1))
+trials.append(100)
+trials.extend(tumble(20, 75, 1, 1))
+trials.append(100)
+trials.extend(tumble(10, 75, 1, 1))
+
+atrials = 0
 
 # parameters to tune
 C = 1000
@@ -58,7 +103,7 @@ if not os.path.exists(currdir):
     os.makedirs(currdir)
 if (overwrite or (not os.path.exists(currdir + test + '.csv'))):
     (data, brakeStrength) = collect(trials, currdir, test,
-                                    atrials=atrials, timeLength=15, mode='temp', breed=breed,stepwise=True)
+                                    atrials=atrials, timeLength=15, mode='warmup', breed=breed, stepwise=True)
 
 # loads data from previous test
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
@@ -96,7 +141,7 @@ plt.xlabel('Time(s)')
 ax2 = plt.subplot(414)
 ax2.plot(time,
          data[:, 5])
-plt.title('Motor Tenp Vs. Time')
+plt.title('Motor Temp Vs. Time')
 plt.ylabel('Temp (Celsius)')
 plt.xlabel('Time(s)')
 
