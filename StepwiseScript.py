@@ -1,38 +1,57 @@
-
 import numpy as np
+import pickle
 import matplotlib.pyplot as plt
 from collectBrakeData import collectBrakeData as collect
 from arrangeBrakeData import arrangeBrakeData as arrange
 from scipy.optimize import curve_fit
 import os
-# set up equation to work with sci.curve fit
+
+'''
+Script for performing the Stepwise Test Conducted by Placid Industries
+to correlate Motor Current to Brake Torque
+Generally not used by itself, as stepwise Tests are now
+incorporated into all tests
+'''
+
+
+# metadata to save for test
+brakeID = 1742
 breed = 'PG188PlacidStepwiseTest'
+testID = 27
+test = breed + str(testID)
+currdir = 'data/' + str(brakeID) + '/' + breed + \
+    '/' + breed + str(testID) + '/'
 
 
-def itoT(i, p0,p1,p2):
+def itoT(i, p0, p1, p2):  # equation for curve fitting
     T = p0 + p1 * np.sqrt(i + p2)
     return T
 
 
-runs = 1
-testID = 27
-test = breed + str(testID)
-currdir = 'data/' + breed + '/' + breed + str(testID) + '/'
+runs = 1  # times to do test
 
-brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9, 77.7, 85.4, 92.2,
-                 99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9, 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
+brakeStrength = [0, 6.8, 13.6, 20.4, 27.2, 34, 40.8, 47.6, 54.4, 62.1, 69.9,
+                 77.7, 85.4, 92.2, 99.4, 100, 99.4, 92.2, 85.4, 77.7, 69.9,
+                 62.1, 54.4, 47.6, 40.8, 34, 27.2, 20.4, 13.6, 6.8, 0]
 brakeStrength = brakeStrength * runs
-# brakeStrength = [0, 100, 0]
+
+# makes folder
 if not os.path.exists(currdir):
     os.makedirs(currdir)
+
+# run collect data with parameters
 if not os.path.exists(currdir + test + '.csv'):
-    (data, brakeStrength) = collect(brakeStrength, currdir, test, timeLength=12,mode='settemp', testSet=16,breed=breed)
+    (data, brakeStrength) = collect(brakeStrength, currdir, test,
+                                    timeLength=15, mode='warmup',
+                                    testSet=16, breed=breed)
+
+# import data from test
 data = np.loadtxt(currdir + test + '.csv', delimiter=',', comments='# ')
 brakeStrength = np.loadtxt(currdir + 'BrakeCommands' +
                            test + '.csv', delimiter=',', comments='# ')
+
 # plot here
 time = data[:, 0]
-
 ax = plt.subplot(411)
 ax.plot(time,
         data[:, 1],)
@@ -74,25 +93,27 @@ avgCurrent = compData[:, -1]
 placidData = np.genfromtxt('data/ActualPlacidData.csv', delimiter=',')
 placidData[0, 0] = 1.13
 placidData = np.tile(placidData, (runs, 1))
-# Do least Squares fitting
-# p = np.polyfit(avgCurrent[:15, 0] - noLoadCurrent, placidData[:15, 0], 1)
-#currTorData = np.vstack((placidData[:, 0], avgCurrent)).T
 
-# replace with square root fit
-# p = analyze(currTorData, 2, True)
-p, cov = curve_fit(itoT, avgCurrent, placidData[:, 0],[-121,0.0111*np.sqrt(40160000),900000000/40160000] )
+# do square root fit
+p, cov = curve_fit(
+    itoT, avgCurrent, placidData[:, 0],
+    [-121, 0.0111 * np.sqrt(40160000), 900000000 / 40160000])
+
+# print parameters
 print(p)
 
+# save
+with open(currdir + 'StepwiseP' + '.pickle', 'wb') as f:
+    pickle.dump(p, f)
 
-# lsfit = np.polyval(p, avgCurrent)
-# plot actual brake % data vs transformed torque
 # plot lake Placid data
-
 ax = plt.subplot(111)
 print(np.shape(avgCurrent))
 for r in range(runs):
-    ax.plot(avgCurrent[r*31:(31*r+16)], placidData[31*r:31*r+16, 0],'b--')
-    ax.plot(avgCurrent[r*31+16:(31*r+31)], placidData[31*r+16:31*r+31, 0],'r--')
+    ax.plot(avgCurrent[r * 31:(31 * r + 16)],
+            placidData[31 * r:31 * r + 16, 0], 'b--')
+    ax.plot(avgCurrent[r * 31 + 16:(31 * r + 31)],
+            placidData[31 * r + 16:31 * r + 31, 0], 'r--')
 plt.title('Actual Current Vs. Placid Reported Torque')
 plt.ylabel('Torque (in-lb)')
 plt.xlabel('Current (Amps)')

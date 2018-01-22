@@ -37,14 +37,14 @@ static PyMethodDef module_methods[] = {
 
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "brake",
+    "brake_implement",
     module_docstring,
     -1,
     module_methods,
 };
 
 /* Initialize the module */
-PyObject *PyInit_brake(void)
+PyObject *PyInit_brake_implement(void)
 {
     PyObject *m = PyModule_Create(&moduledef);
     /*if (m == NULL) {
@@ -145,16 +145,28 @@ static PyObject *setTorque(PyObject * self, PyObject *args)
 	int16_t target; //percentage of rated torque
     //void* ptr;
 	//assign arguments to variables
+    try { 
 	if (!PyArg_ParseTuple(args, "Oi", &lngDrive,&target))
         return NULL;
-    
     Drive = (MCLIB::INode*) PyLong_AsVoidPtr(lngDrive);
+    } catch (...) {
+        PyErr_SetString(PyExc_RuntimeError,
+                    "Error (Nebula): Error Connecting to Controller to Set Torque");
+        return NULL; }
+    
+    
     //Py_DECREF(lngDrive)
     //Drive = MCLIB::INode* (ptr);
    // Drive = ptr;
     // target = target *10;
+    try {
 	Drive->GetMotionController()->SetTargetTorque(target);
-	Py_RETURN_NONE;
+	Py_RETURN_NONE; } catch (...) {
+        PyErr_SetString(PyExc_RuntimeError,
+                    "Error (Nebula): Error Setting Torque");
+        return NULL; }
+
+    
 }
 
 static PyObject *readCurrent(PyObject * self, PyObject *args)
@@ -163,6 +175,7 @@ static PyObject *readCurrent(PyObject * self, PyObject *args)
     PyObject* lngDrive;
     MCLIB::INode* Drive;
     int16_t torque;
+    try {
     if (!PyArg_ParseTuple(args, "O", &lngDrive))
         return NULL;
     
@@ -171,8 +184,17 @@ static PyObject *readCurrent(PyObject * self, PyObject *args)
     //Drive = MCLIB::INode* (ptr);
    // Drive = ptr;
     // target = target *10;
+} catch (...) { 
+    PyErr_SetString(PyExc_RuntimeError,
+                    "Error (Nebula): Error Connecting to Controller to Read Current");
+        return NULL; }
+try{
     torque = Drive->GetMotionController()->GetActualTorque();
     return Py_BuildValue("i",torque);
+    } catch (...) {
+        PyErr_SetString(PyExc_RuntimeError,
+                    "Error (Nebula): Error Reading Current");
+        return NULL; }
 }
 
 static PyObject *close(PyObject * self, PyObject *args) {
@@ -180,6 +202,7 @@ static PyObject *close(PyObject * self, PyObject *args) {
     MCLIB::INode* Drive;
     PyObject* lngChannel;
     MCLIB::IChannel* Channel;
+    try {
     if (!PyArg_ParseTuple(args, "OO", &lngChannel, &lngDrive)) {
         PyErr_SetString(PyExc_RuntimeError,
                     "Nebula Controller Not Found");
@@ -195,5 +218,8 @@ static PyObject *close(PyObject * self, PyObject *args) {
     MCLIB::Close();
     Py_DECREF(lngDrive);
     Py_DECREF(lngChannel);
-    Py_RETURN_NONE;
+    Py_RETURN_NONE; } catch (...) {
+        PyErr_SetString(PyExc_RuntimeError,
+                    "Error (Nebula): Error Closing Controller");
+        return NULL; }
 }

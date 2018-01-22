@@ -1,10 +1,10 @@
 from distutils.core import setup, Extension
-# from Cython.Distutils import build_ext
-
-c_ext = Extension("brake", ["brake.cpp"])
 
 
-module1 = Extension('brake',
+c_ext = Extension("brake_implement", ["brake.cpp"])
+
+
+module1 = Extension('brake_implement',
                     include_dirs=[
                         "C:/Program Files (x86)/Ingenia/MCLIB/includes"],
                     libraries=['MCLIB', 'python36'],
