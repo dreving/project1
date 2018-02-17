@@ -91,6 +91,9 @@ class CMF(RoboClaw):
     # conversion from current to torque
     def itoT(i, p0=-93.1, p1=67.94, p2=1.297):
         T = p0 + p1 * np.sqrt(i + p2)
+        # # T = p0 + p1*i
+        # si = .7
+        # T =  396/(22-si)*(i-si)
         return T
 
 # test code

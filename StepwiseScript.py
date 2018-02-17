@@ -17,7 +17,7 @@ incorporated into all tests
 # metadata to save for test
 brakeID = 1742
 breed = 'PG188PlacidStepwiseTest'
-testID = 27
+testID = 28
 test = breed + str(testID)
 currdir = 'data/' + str(brakeID) + '/' + breed + \
     '/' + breed + str(testID) + '/'

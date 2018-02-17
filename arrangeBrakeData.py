@@ -2,6 +2,7 @@ import numpy as np
 from CalibrationMotorFunctions import CMF
 import csv
 from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
 
 '''
 Function for converting raw data into an average torque for each command
@@ -14,10 +15,11 @@ collected per second, extracted from data file to prevent error
 convert-boolean for whether or not to convert average current to torque
 '''
 
-
+np.warnings.filterwarnings('ignore')
 # used in curve fitting
 def itoT(i, p0, p1, p2):
     T = p0 + p1 * np.sqrt(i + p2)
+    # T = p0 + p1*i
     return T
 
 
@@ -95,6 +97,9 @@ def arrangeBrakeData(data, BrakeStrength, currdir, fname=None, timeLength=3,
 
         # handles conversion
         avgTorque = CMF.itoT(avgCurrent, p0, p1, p2)
+        fig = plt.figure()
+        plt.plot(stepwisecurr,placidData[:, 0])
+        plt.show()
         avgTorque = avgTorque[:, 0]
         prevTorque = np.hstack(([1.25], avgTorque[:-1]))
 

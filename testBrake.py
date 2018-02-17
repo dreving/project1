@@ -42,14 +42,14 @@ saved in a separate file
 # metadata to save for tests
 brakeID = 1742
 breed = 'PG188Test'
-testID = '2'
+testID = 2
 currdir = 'data/' + str(brakeID) + '/' + breed + \
     '/' + breed + str(testID) + '/'
 test = breed + str(testID)
 overwrite = False  # overwrite data already in file
 convert = True  # convert current to torque
 
-# test function parameters (trials = 100, atrials = 200)
+# test function parameters (trials = 75, atrials = 100)
 trials = 75
 atrials = 150
 
@@ -63,7 +63,7 @@ boundXL = 3
 
 # order of polynomial fit for rising and falling curve
 riseXL = 6
-fallXL = 4
+fallXL = 6
 
 # makes filepath and runs test if it doesn't already exist
 if not os.path.exists(currdir):
@@ -122,7 +122,6 @@ compData = arrange(data, brakeStrength, currdir, test, convert=convert)
 with open(currdir + test + '.csv', newline='') as csvfile:
     header = next(csv.reader(csvfile, delimiter=',', quotechar='|'))
     header = ''.join(header)
-    print(header)
     # import pts and timeLength here
     l = []
     for t in header.split():
@@ -167,6 +166,9 @@ plt.savefig(currdir + test + 'figure2.png')
 # only do svm analysis if labeled data exists:
 if atrials > 0:
     rData = ncompData[trials:(trials + atrials // 2), :]
+    riseP = np.polyfit(rData[:,-1],rData[:,0],riseXL)
+    print(np.polyval(riseP,20))
+    print(riseP)
     fData = ncompData[(trials + atrials // 2):, :]
 
     base = min(rData[:, -1])
@@ -214,6 +216,9 @@ if atrials > 0:
 
     # fits
     riseP = np.polyfit(rpoints[:, -1], rpoints[:, 0], riseXL)
+    print(np.polyval(riseP,20))
+    print(riseP)
+    print(np.polyval(riseP,5))
     fallP = np.polyfit(fpoints[:, -1], fpoints[:, 0], fallXL)
 
     # load pLacid Data

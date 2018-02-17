@@ -15,7 +15,7 @@ Used for sawtooth tests and the final tests
 '''
 # metadata to save for test
 brakeID = 1742
-breed = 'PendTest'
+breed = 'TCTest'
 calTestBreed = 'PG188Test'
 DNATestBreed = 'DNATest'
 testID = 'MoreTrials_DNARedo5'

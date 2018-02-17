@@ -41,10 +41,11 @@ class Brake(object):
         self.Mc = None
         self.Nb = None
 
-# # for testing
+# for testing
 # Nb = Brake()
-# Nb.setTorque(50)
-# time.sleep(5)
+# Nb.setTorque(100)
+# print('set')
+# time.sleep(15)
 # print(Nb.readCurrent())
 # print(Nb.readCurrent())
 # print(Nb.readCurrent())

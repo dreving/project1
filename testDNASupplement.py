@@ -66,13 +66,13 @@ def tumList(lowEnd, upEnd, tumLength, resol, dec, trials):
 # set metadata
 brakeID = 1742
 breed = 'DNATest'
-calTestBreed = 'PG188Test'
 testID = '3'
 test = breed + str(testID)
 currdir = 'data/' + str(brakeID) + '/' + breed + \
     '/' + breed + str(testID) + '/'
 
 # name of test from which to extract curve parameters
+calTestBreed = 'PG188Test'
 paramTestID = 2
 paramdir = 'data/' + str(brakeID) + '/' + calTestBreed + \
     '/' + calTestBreed + str(paramTestID) + '/'

@@ -132,7 +132,7 @@ def collectBrakeData(trials, currdir, fname, timeLength=12, pts=50,
     dt = 1.0 / pts  # estimated runtime of each loop
 
     # PID tuning parameteres
-    P = 5
+    P = 6
     D = .75
     I = .15
 
